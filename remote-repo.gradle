@@ -1,6 +1,6 @@
 
 def PrivateRepo = {
-    name = 'private'
+    name = 'devnindo'
     url = prvRepoURL
     credentials {
         username  prvUserName

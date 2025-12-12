@@ -24,6 +24,10 @@ import io.devnindo.datatype.util.Either;
 import io.devnindo.datatype.validation.ObjViolation;
 import io.devnindo.datatype.validation.Violation;
 
+import java.io.IOException;
+import java.io.InvalidObjectException;
+import java.io.ObjectInputStream;
+import java.io.ObjectStreamException;
 import java.lang.reflect.InvocationTargetException;
 import java.util.HashMap;
 import java.util.List;
@@ -56,6 +60,10 @@ public abstract class BeanSchema<T extends DataBean> {
         });
     }
 
+    public BeanSchema(){
+        SchemaDict.regSchema(getClass().getName(), this);
+    }
+
     @Deprecated
     public static <D extends DataBean> BeanSchema<D> of(Class<D> modelClz$) {
         BeanSchema schema = SCHEMA_MAP.get(modelClz$.getName());
@@ -75,6 +83,9 @@ public abstract class BeanSchema<T extends DataBean> {
 
         return schema;
     }
+
+
+
 
     protected static final <T extends DataBean> ObjViolation newViolation(Class<T> beanClz) {
 
@@ -115,10 +126,30 @@ public abstract class BeanSchema<T extends DataBean> {
 
     public abstract JsonObject apply(T dataBean$);
 
+    // kept for backward compatibility
     public abstract Either<Violation, T> apply(JsonObject reqObj);
+
+    //json to object
+    public abstract Either<Violation, T> apply(String reqObj);
+
+
 
     public abstract DataDiff<T> diff(T from$, T to$);
 
+    protected final Object clone() throws CloneNotSupportedException {
+        throw new CloneNotSupportedException();
+    }
+
+    @java.io.Serial
+    private void readObject(ObjectInputStream in) throws IOException,
+            ClassNotFoundException {
+        throw new InvalidObjectException("can't deserialize enum");
+    }
+
+    @java.io.Serial
+    private void readObjectNoData() throws ObjectStreamException {
+        throw new InvalidObjectException("can't deserialize enum");
+    }
 
 }
 

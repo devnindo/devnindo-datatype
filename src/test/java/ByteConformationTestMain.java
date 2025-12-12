@@ -24,8 +24,7 @@ import java.nio.charset.StandardCharsets;
 public class ByteConformationTestMain {
 
     @Test
-    public static void check_byte_conversion_utf8_set(String... args) {
-
+    public   void check_byte_conversion_utf8_set() {
 
         JsonObject js = new JsonObject();
         JsonArray arrJS = new JsonArray("[100, 200, \"aa\"]");

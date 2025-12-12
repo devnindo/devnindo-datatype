@@ -25,17 +25,21 @@ import java.util.function.BiConsumer;
 import java.util.function.Consumer;
 import java.util.function.Function;
 
-public class SchemaField<D extends DataBean, VAL> {
+public final class SchemaField<D extends DataBean, VAL> {
     public final String name;
     public final Function<D, VAL> accessor;
     public final TypeResolver<VAL> typeResolver;
     private final boolean required;
 
-    public SchemaField(String name, Function<D, VAL> accessor, TypeResolver<VAL> typeResolver, boolean required) {
+
+    public SchemaField(String beanClzName, String name, Function<D, VAL> accessor, TypeResolver<VAL> typeResolver, boolean required) {
         this.name = name;
         this.accessor = accessor;
         this.typeResolver = typeResolver;
         this.required = required;
+
+        //register to dictionary: to ensure there is always one live instance mapping.
+        SchemaDict.regField(beanClzName, name, this);
     }
 
     public Either<Violation, VAL> fromJson(JsonObject jsObj) {
