@@ -7,7 +7,6 @@ plugins {
 
 group = 'io.devnindo.core'
 version = '0.9.8'
-sourceCompatibility = JavaVersion.VERSION_11
 
 apply from: 'publish.gradle'
 
@@ -17,6 +16,7 @@ dependencies {
     implementation 'org.jooq:joor:0.9.14'
     implementation 'io.github.classgraph:classgraph:4.8.157'
     testImplementation 'org.junit.jupiter:junit-jupiter:5.9.2'
+
 }
 
 test {
