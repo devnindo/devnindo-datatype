@@ -15,7 +15,9 @@ dependencies {
     implementation 'com.fasterxml.jackson.core:jackson-core:2.14.2'
     implementation 'org.jooq:joor:0.9.14'
     implementation 'io.github.classgraph:classgraph:4.8.157'
-    testImplementation 'org.junit.jupiter:junit-jupiter:5.9.2'
+    testImplementation 'org.junit.jupiter:junit-jupiter-api:5.10.0' // Use the appropriate version
+    testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.10.0' // Use the appropriate version
+    testRuntimeOnly 'org.junit.platform:junit-platform-launcher:1.10.0' // Use the appropriate version
 
 }
 
