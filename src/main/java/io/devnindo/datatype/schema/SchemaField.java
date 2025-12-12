@@ -32,28 +32,25 @@ public final class SchemaField<D extends DataBean, VAL> {
     private final boolean required;
 
 
-    public SchemaField(String beanClzName, String name, Function<D, VAL> accessor, TypeResolver<VAL> typeResolver, boolean required) {
+    SchemaField(String name, Function<D, VAL> accessor, TypeResolver<VAL> typeResolver, boolean required) {
         this.name = name;
         this.accessor = accessor;
         this.typeResolver = typeResolver;
         this.required = required;
 
-        //register to dictionary: to ensure there is always one live instance mapping.
-        SchemaDict.regField(beanClzName, name, this);
     }
 
     public Either<Violation, VAL> fromJson(JsonObject jsObj) {
         Object val = jsObj.getValue(name);
-        if (val == null) {
-            if (required)
-                return Either.left(LogicalViolations.notNull());
-            else return Either.right(null);
-        }
+        if (val != null)
+            return typeResolver.evalJsonVal(val);
+        else if (required)
+            return Either.left(LogicalViolations.notNull());
+        else return Either.right(null);
 
-        return typeResolver.evalJsonVal(val);
     }
 
-    public Object toJson(D dataBean) {
+    public Object toJsonVal(D dataBean) {
         VAL val = accessor.apply(dataBean);
         if (val == null)
             return null;

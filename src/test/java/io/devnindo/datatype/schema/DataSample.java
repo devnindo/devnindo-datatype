@@ -1,4 +1,4 @@
-package io.devnindo.datatype.beanexample;
+package io.devnindo.datatype.schema;
 
 
 import io.devnindo.datatype.json.JsonArray;

@@ -45,7 +45,7 @@ public class BeanResolver<D extends DataBean> implements TypeResolver<D> {
 
     @Override
     public Object toJsonVal(D d) {
-        return d.toJson();
+        return d.toJsonObject();
     }
 
     @Override

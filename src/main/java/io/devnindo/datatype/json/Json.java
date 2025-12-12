@@ -15,13 +15,13 @@
  */
 package io.devnindo.datatype.json;
 
-import io.devnindo.datatype.json.jackson.JacksonCodec;
+import io.devnindo.datatype.json.jackson.DefaultCodec;
 
 import java.nio.charset.StandardCharsets;
 
 public interface Json {
 
-    JacksonCodec CODEC = new JacksonCodec();
+    DefaultCodec CODEC = new DefaultCodec();
 
     public default byte[] toByteData() {
         return encode().getBytes(StandardCharsets.UTF_8);

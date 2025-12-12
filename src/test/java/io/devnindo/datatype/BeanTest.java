@@ -1,10 +1,7 @@
 package io.devnindo.datatype;
 
-import io.devnindo.datatype.beanexample.APerson;
-import io.devnindo.datatype.beanexample.Address;
-import io.devnindo.datatype.beanexample.DataSample;
+import io.devnindo.datatype.schema.*;
 import io.devnindo.datatype.json.JsonObject;
-import io.devnindo.datatype.schema.BeanSchema;
 import io.devnindo.datatype.util.Either;
 import io.devnindo.datatype.validation.ObjViolation;
 import io.devnindo.datatype.validation.Violation;
@@ -16,8 +13,11 @@ import java.util.List;
 public class BeanTest {
     @Test
     public void json_to_bean_using_schema_success() {
+
+
+
         JsonObject addressJS = DataSample.anAddressJS();
-        Either<Violation, Address> addressEither = BeanSchema.of(Address.class).apply(addressJS);
+        Either<Violation, Address> addressEither = BeanSchema.of(Address.class).fromJsonObj(addressJS);
         Assertions.assertEquals(Boolean.TRUE, addressEither.isRight());
 
         Address address = addressEither.right();
@@ -70,7 +70,7 @@ public class BeanTest {
         Violation violation = addressEither.left();
         Assertions.assertEquals(ObjViolation.class, violation.getClass());
 
-        System.out.println(violation.toJson().encodePrettily());
+        System.out.println(violation.toJsonObject().encodePrettily());
         Assertions.assertTrue(violation.hasVarCtx(), "should have more than one type constraint violated");
 
         JsonObject ctx = violation.getVarCtx();

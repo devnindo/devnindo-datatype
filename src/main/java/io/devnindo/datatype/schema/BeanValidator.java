@@ -71,7 +71,7 @@ public final class BeanValidator<D extends DataBean>
     public Either<Violation, D> apply(JsonObject dataObj$) {
 
 
-        Either<Violation, D> dataBeanEither = BeanSchema.of(beanClz).apply(dataObj$);
+        Either<Violation, D> dataBeanEither = BeanSchema.of(beanClz).fromJsonObj(dataObj$);
 
         if (dataBeanEither.isLeft())
             return Either.left(dataBeanEither.left());

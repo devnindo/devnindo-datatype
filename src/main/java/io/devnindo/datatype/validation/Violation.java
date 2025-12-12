@@ -60,7 +60,7 @@ public class Violation<CTX> implements Jsonable {
     }
 
     @Override
-    public JsonObject toJson() {
+    public JsonObject toJsonObject() {
         return new JsonObject()
                 .put("constraint", constraint)
                 .put("ctx", ctxData);

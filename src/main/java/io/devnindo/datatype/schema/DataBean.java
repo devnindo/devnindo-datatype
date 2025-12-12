@@ -29,10 +29,16 @@ public interface DataBean extends Jsonable {
 
 
     @Override
-    public default JsonObject toJson() {
+    public default JsonObject toJsonObject() {
         BeanSchema  schema = BeanSchema.of(this.getClass().getName());
-        return schema.apply(this);
+        return schema.toJsonObj(this);
     }
+
+    public default String encode() {
+        BeanSchema  schema = BeanSchema.of(this.getClass().getName());
+        return schema.toJsonStr(this);
+    }
+
 
     /**
      * helps diff-and-merge two DataBean of same type T

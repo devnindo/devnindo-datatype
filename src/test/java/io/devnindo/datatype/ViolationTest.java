@@ -1,7 +1,7 @@
 package io.devnindo.datatype;
 
-import io.devnindo.datatype.beanexample.$APerson;
-import io.devnindo.datatype.beanexample.Gender;
+import io.devnindo.datatype.schema.$APerson;
+import io.devnindo.datatype.schema.Gender;
 import io.devnindo.datatype.json.JsonObject;
 import io.devnindo.datatype.validation.Violation;
 import org.junit.jupiter.api.Assertions;
@@ -29,8 +29,8 @@ public class ViolationTest {
     public void var_ctx_violation() {
         // violation of a constraint
         JsonObject js = new JsonObject()
-                .put($APerson.GENDER, Gender.female)
-                .put($APerson.AGE, 45);
+                .put($APerson.gender, Gender.female)
+                .put($APerson.age, 45);
         Violation violation = Violation.withCtx("PENSION_ELIGIBLE", js);
         Assertions.assertEquals(Boolean.FALSE, violation.hasSingleCtx());
         Assertions.assertEquals(Boolean.TRUE, violation.hasVarCtx());

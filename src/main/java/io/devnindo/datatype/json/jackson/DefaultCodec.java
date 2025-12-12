@@ -39,14 +39,15 @@ import java.util.Map;
 import static io.devnindo.datatype.util.JsonUtil.*;
 import static java.time.format.DateTimeFormatter.ISO_INSTANT;
 
-public class JacksonCodec {
+@Deprecated
+public class DefaultCodec {
 
-    private static final JsonFactory factory = new JsonFactory();
+    private static final JsonFactory jacksonFactory = new JsonFactory();
 
     static {
         // Non-standard JSON but we allow C style comments in our JSON
-        factory.configure(JsonParser.Feature.ALLOW_COMMENTS, true);
-        factory.configure(JsonParser.Feature.ALLOW_UNQUOTED_FIELD_NAMES, true);
+        jacksonFactory.configure(JsonParser.Feature.ALLOW_COMMENTS, true);
+        jacksonFactory.configure(JsonParser.Feature.ALLOW_UNQUOTED_FIELD_NAMES, true);
     }
 
     /**
@@ -72,7 +73,7 @@ public class JacksonCodec {
   }*/
     public static JsonParser createParser(String str) {
         try {
-            return factory.createParser(str);
+            return jacksonFactory.createParser(str);
         } catch (IOException e) {
             throw new DecodeException("Failed to decode:" + e.getMessage(), e);
         }
@@ -80,7 +81,7 @@ public class JacksonCodec {
 
     public static JsonParser createParser(byte[] byteData) {
         try {
-            return factory.createParser(byteData);
+            return jacksonFactory.createParser(byteData);
         } catch (IOException e) {
             throw new DecodeException("Failed to decode:" + e.getMessage(), e);
         }
@@ -88,7 +89,7 @@ public class JacksonCodec {
 
     private static JsonGenerator createGenerator(Writer out, boolean pretty) {
         try {
-            JsonGenerator generator = factory.createGenerator(out);
+            JsonGenerator generator = jacksonFactory.createGenerator(out);
             if (pretty) {
                 generator.useDefaultPrettyPrinter();
             }
@@ -100,7 +101,7 @@ public class JacksonCodec {
 
     private static JsonGenerator createGenerator(OutputStream out, boolean pretty) {
         try {
-            JsonGenerator generator = factory.createGenerator(out);
+            JsonGenerator generator = jacksonFactory.createGenerator(out);
             if (pretty) {
                 generator.useDefaultPrettyPrinter();
             }
@@ -263,7 +264,7 @@ public class JacksonCodec {
                 generator.writeString(((Enum<?>) json).name());
             } else if (json instanceof Jsonable) // to support encoding of DataBean and other Jsonable
             {
-                encodeJson0(Jsonable.class.cast(json).toJson(), generator);
+                encodeJson0(Jsonable.class.cast(json).toJsonObject(), generator);
             } else if (json == null) {
                 generator.writeNull();
             } else {

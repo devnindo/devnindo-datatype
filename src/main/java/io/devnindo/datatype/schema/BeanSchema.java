@@ -18,8 +18,6 @@ package io.devnindo.datatype.schema;
 import io.devnindo.datatype.json.JsonObject;
 import io.devnindo.datatype.schema.typeresolver.TypeResolverFactory;
 import io.devnindo.datatype.schema.typeresolver.TypeResolver;
-import io.devnindo.datatype.schema.typeresolver.literals.EnumResolver;
-import io.devnindo.datatype.util.ClzUtil;
 import io.devnindo.datatype.util.Either;
 import io.devnindo.datatype.validation.ObjViolation;
 import io.devnindo.datatype.validation.Violation;
@@ -28,40 +26,39 @@ import java.io.IOException;
 import java.io.InvalidObjectException;
 import java.io.ObjectInputStream;
 import java.io.ObjectStreamException;
-import java.lang.reflect.InvocationTargetException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.function.Function;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 public abstract class BeanSchema<T extends DataBean> {
 
-    private static Map<String, BeanSchema> SCHEMA_MAP;
+    private static final Map<String, BeanSchema> SCHEMA_MAP;
+    private static final Map<String, SchemaField> FIELD_MAP;
 
     static {
         SCHEMA_MAP = new HashMap<>();
-        List<Class<?>> schemaList = ClzUtil.findSubClzList(BeanSchema.class);
-        schemaList.forEach(schema -> {
-            //calculate beanName according to convention
-            // NAMING: For a Bean, schema name is $Bean;
-            // PACKAGE: Generated Schema has same package as the bean
-            // omit prefix "$"
-            String beanSimpleName = schema.getSimpleName().substring(1);
-            String beanName = schema.getPackage().getName() + "." + beanSimpleName;
-            try {
-                BeanSchema instance = (BeanSchema) schema.getConstructor().newInstance();
-                SCHEMA_MAP.put(beanName, instance);
-            } catch (InstantiationException | IllegalAccessException | InvocationTargetException |
-                     NoSuchMethodException ex) {
-                Logger.getLogger(BeanSchema.class.getName()).log(Level.SEVERE, null, ex);
-            }
-        });
+        FIELD_MAP = new HashMap<>();
     }
 
-    public BeanSchema(){
-        SchemaDict.regSchema(getClass().getName(), this);
+    protected static final void regSchema(BeanSchema beanSchema, SchemaField... fieldArr){
+        String clzName = beanSchema.getClass().getName();
+        SCHEMA_MAP.put(clzName, beanSchema);
+        for(SchemaField f : fieldArr){
+            FIELD_MAP.put(clzName+"."+f.name, f);
+        }
+    }
+
+    protected static final BeanSchema getSchema(String clzName){
+        return SCHEMA_MAP.get(clzName);
+    }
+
+    protected static final void regField(String dataClzName,  SchemaField field){
+        FIELD_MAP.put(dataClzName+"."+field.name, field);
+    }
+
+    protected static final SchemaField getField(String dataClzName, String name){
+        return FIELD_MAP.get(dataClzName+"."+name);
     }
 
     @Deprecated
@@ -92,31 +89,31 @@ public abstract class BeanSchema<T extends DataBean> {
         return new ObjViolation("SCHEMA::" + beanClz.getSimpleName());
     }
 
-    public static final <D extends DataBean, VAL> SchemaField<D, VAL>
+    protected static final <D extends DataBean, VAL> SchemaField<D, VAL>
     plainField(String name$, Function<D, VAL> getter$, Class<VAL> typeClz$, boolean required$) {
         TypeResolver resolverIF = TypeResolverFactory.plain(typeClz$);
         return new SchemaField<>(name$, getter$, resolverIF, required$);
     }
 
-    public static final <D extends DataBean, VAL> SchemaField<D, List<VAL>>
+    protected static final <D extends DataBean, VAL> SchemaField<D, List<VAL>>
     plainListField(String name$, Function<D, List<VAL>> getter$, Class<VAL> typeClz$, boolean required$) {
         TypeResolver resolverIF = TypeResolverFactory.plainDataList(typeClz$);
         return new SchemaField<>(name$, getter$, resolverIF, required$);
     }
 
-    public static final <D extends DataBean, VAL extends DataBean> SchemaField<D, VAL>
+    protected static final <D extends DataBean, VAL extends DataBean> SchemaField<D, VAL>
     beanField(String name$, Function<D, VAL> getter$, Class<VAL> typeClz$, boolean required$) {
         TypeResolver resolverIF = TypeResolverFactory.beanType(typeClz$);
         return new SchemaField<>(name$, getter$, resolverIF, required$);
     }
 
-    public static final <D extends DataBean, VAL extends DataBean> SchemaField<D, List<VAL>>
+    protected static final <D extends DataBean, VAL extends DataBean> SchemaField<D, List<VAL>>
     beanListField(String name$, Function<D, List<VAL>> getter$, Class<VAL> typeClz$, boolean required$) {
         TypeResolver resolverIF = TypeResolverFactory.beanList(typeClz$);
         return new SchemaField<>(name$, getter$, resolverIF, required$);
     }
 
-    public static final <D extends DataBean, VAL extends Enum<VAL>> SchemaField<D, VAL>
+    protected static final <D extends DataBean, VAL extends Enum<VAL>> SchemaField<D, VAL>
     enumField(String name$, Function<D, VAL> getter$, Class<VAL> enumType$, boolean required$) {
         TypeResolver resolverIF = TypeResolverFactory.enumType(enumType$);
         return new SchemaField<>(name$, getter$, resolverIF, required$);
@@ -124,13 +121,16 @@ public abstract class BeanSchema<T extends DataBean> {
 
 
 
-    public abstract JsonObject apply(T dataBean$);
+    public abstract JsonObject toJsonObj(T dataBean$);
+
+    public abstract String toJsonStr(T dataBean$);
+
 
     // kept for backward compatibility
-    public abstract Either<Violation, T> apply(JsonObject reqObj);
+    public abstract Either<Violation, T> fromJsonObj(JsonObject js);
 
     //json to object
-    public abstract Either<Violation, T> apply(String reqObj);
+    public abstract Either<Violation, T> fromJsonStr(String reqObj);
 
 
 

@@ -65,7 +65,7 @@ public class BeanListResolver<T extends DataBean> implements TypeResolver<List<T
     @Override
     public Object toJsonVal(List<T> dataList) {
         JsonArray array = new JsonArray();
-        dataList.forEach(bean -> array.add(bean.toJson()));
+        dataList.forEach(bean -> array.add(bean.toJsonObject()));
         return dataList;
     }
 

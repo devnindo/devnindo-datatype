@@ -1,7 +1,5 @@
-package io.devnindo.datatype.beanexample;
+package io.devnindo.datatype.schema;
 
-
-import io.devnindo.datatype.schema.AField;
 
 public class AnEmployee extends APerson {
     Integer salary;

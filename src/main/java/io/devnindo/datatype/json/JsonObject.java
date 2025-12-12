@@ -139,12 +139,12 @@ public class JsonObject implements
 
     public <D extends DataBean> Either<Violation, D> toBeanEither(Class<D> beanType) {
         BeanSchema<D> schema = BeanSchema.of(beanType.getName());
-        return schema.apply(this);
+        return schema.fromJsonObj(this);
     }
 
     public <D extends DataBean> D toBean(Class<D> beanType) {
         BeanSchema<D> schema = BeanSchema.of(beanType.getName());
-        return schema.apply(this).right();
+        return schema.fromJsonObj(this).right();
     }
 
     /**
@@ -628,7 +628,7 @@ public class JsonObject implements
      */
     public JsonObject put(String key, Jsonable value) {
         Objects.requireNonNull(key);
-        map.put(key, value.toJson());
+        map.put(key, value.toJsonObject());
         return this;
     }
 

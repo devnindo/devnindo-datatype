@@ -1,7 +1,7 @@
 package io.devnindo.datatype;
 
-import io.devnindo.datatype.beanexample.Address;
-import io.devnindo.datatype.beanexample.DataSample;
+import io.devnindo.datatype.schema.Address;
+import io.devnindo.datatype.schema.DataSample;
 import io.devnindo.datatype.json.JsonArray;
 import io.devnindo.datatype.json.JsonObject;
 import io.devnindo.datatype.schema.typeresolver.TypeResolverFactory;
@@ -70,7 +70,7 @@ public class TypeResolverTest {
         TypeResolver<List<Address>> resolver = TypeResolverFactory.beanList(Address.class);
         Either<Violation, List<Address>> listJsEither = resolver.evalJsonVal(DataSample.invalidAddressArr());
         Assertions.assertEquals(Boolean.TRUE, listJsEither.isLeft());
-        System.out.println(listJsEither.left().toJson().encodePrettily());
+        System.out.println(listJsEither.left().toJsonObject().encodePrettily());
 
 
     }

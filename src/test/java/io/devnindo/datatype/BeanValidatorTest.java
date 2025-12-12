@@ -1,18 +1,15 @@
 package io.devnindo.datatype;
 
-import io.devnindo.datatype.beanexample.$APerson;
-import io.devnindo.datatype.beanexample.APerson;
-import io.devnindo.datatype.beanexample.DataSample;
-import io.devnindo.datatype.beanexample.Gender;
+import io.devnindo.datatype.schema.$APerson;
+import io.devnindo.datatype.schema.APerson;
+import io.devnindo.datatype.schema.DataSample;
+import io.devnindo.datatype.schema.Gender;
 import io.devnindo.datatype.json.JsonObject;
 import io.devnindo.datatype.schema.BeanValidator;
 import io.devnindo.datatype.util.Either;
-import io.devnindo.datatype.validation.Validator;
 import io.devnindo.datatype.validation.Violation;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
-
-import java.time.Period;
 
 import static io.devnindo.datatype.validation.validators.ValueRules.*;
 
@@ -27,7 +24,7 @@ public class BeanValidatorTest {
 
         // there is a violation
         Assertions.assertTrue(personEither.isLeft());
-        System.out.println(personEither.left().toJson().encodePrettily());
+        System.out.println(personEither.left().toJsonObject().encodePrettily());
     }
 
     @Test
@@ -36,8 +33,8 @@ public class BeanValidatorTest {
         APerson person = personJS.toBean(APerson.class);
 
         BeanValidator<APerson> pensionEligibility = BeanValidator.create("FEMALE_PENSION_ELIGIBLE", APerson.class, $ -> {
-            $.required($APerson.AGE).and(gtThan(50));
-            $.required($APerson.GENDER).and(equal(Gender.female));
+            $.required($APerson.age).and(gtThan(50));
+            $.required($APerson.gender).and(equal(Gender.female));
         });
 
         Either<Violation, APerson> personEither = pensionEligibility.apply(person);

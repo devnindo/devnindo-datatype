@@ -17,8 +17,7 @@ package io.devnindo.datatype.json;
 
 public interface Jsonable {
 
-    JsonObject toJson();
-
+    JsonObject toJsonObject();
 
 }
 

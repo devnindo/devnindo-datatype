@@ -1,7 +1,4 @@
-package io.devnindo.datatype.beanexample;
-
-import io.devnindo.datatype.schema.AField;
-import io.devnindo.datatype.schema.DataBean;
+package io.devnindo.datatype.schema;
 
 import java.util.List;
 
