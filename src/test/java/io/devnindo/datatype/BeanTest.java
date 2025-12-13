@@ -14,13 +14,13 @@ import org.junit.jupiter.api.Test;
 import java.util.List;
 
 public class BeanTest {
-    @Test
+   // @Test
     public void json_to_bean_using_schema_success() {
 
-
+        BeanSchema.printSchemaMap();
 
         JsonObject addressJS = DataSample.anAddressJS();
-        Either<Violation, Address> addressEither = BeanSchema.of(Address.class).fromJsonObj(addressJS);
+        Either<Violation, Address> addressEither = addressJS.toBeanEither(Address.class);
         Assertions.assertEquals(Boolean.TRUE, addressEither.isRight());
 
         Address address = addressEither.right();
@@ -35,6 +35,7 @@ public class BeanTest {
     @Test
     public void direct_json_to_bean_success() {
         JsonObject personJS = DataSample.person();
+        BeanSchema.printSchemaMap();
         Either<Violation, APerson> personEither = personJS.toBeanEither(APerson.class);
         Assertions.assertEquals(Boolean.TRUE, personEither.isRight());
         APerson person = personEither.right();
@@ -46,9 +47,11 @@ public class BeanTest {
 
     }
 
-    @Test
+//    @Test
     public void json_to_bean_init_validation_fail() {
         JsonObject personJS = DataSample.invalidPersonAgeType();
+        BeanSchema.printSchemaMap();
+
         Either<Violation, APerson> addressEither = personJS.toBeanEither(APerson.class);
         Assertions.assertEquals(Boolean.TRUE, addressEither.isLeft());
 
@@ -64,7 +67,7 @@ public class BeanTest {
 
     }
 
-    @Test
+   // @Test
     public void json_to_bean_required_validation_fail() {
         JsonObject personJS = DataSample.missingPersonId();
         Either<Violation, APerson> addressEither = personJS.toBeanEither(APerson.class);

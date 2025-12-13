@@ -16,87 +16,20 @@
 package io.devnindo.datatype.util;
 
 
-import io.github.classgraph.ClassGraph;
-import io.github.classgraph.ClassInfoList;
-import io.github.classgraph.ScanResult;
-import org.joor.Reflect;
+import org.atteo.classindex.ClassIndex;
 
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
-import java.util.ArrayList;
-import java.util.List;
 
 public class ClzUtil {
 
 
-    public static List<Class<?>> findSubClzList(Class<?> superClz$) {
-        List<Class<?>> clzList;
-        try (ScanResult scanResult = new ClassGraph().enableClassInfo().scan()) {
-            ClassInfoList clzInfoList;
-            if (superClz$.isInterface())
-                clzInfoList = scanResult.getClassesImplementing(superClz$);
-            else
-                clzInfoList = scanResult.getSubclasses(superClz$);
-            clzList = new ArrayList<>(clzInfoList.size());
-            clzInfoList.forEach(clzInfo -> clzList.add(clzInfo.loadClass()));
-//
-        }
-        return clzList;
+    public static Iterable<Class> scanClzList(Class superClz$) {
+        return ClassIndex.getSubclasses(superClz$);
     }
 
-    public static List<Class<?>> findSubClzList(Class<?> superClz$, String tPackage$)
-    //    throws IllegalAccessException
-    {
-        List<Class<?>> clzList;
-        try (ScanResult scanResult = new ClassGraph().acceptPackages(tPackage$)
-                .enableClassInfo().scan()) {
-
-            ClassInfoList clzInfoList = scanResult.getSubclasses(superClz$);
-            clzList = new ArrayList<>(clzInfoList.size());
-            clzInfoList.forEach(clzInfo -> clzList.add(clzInfo.loadClass()));
-
-        }
-        return clzList;
-
-    }
-
-    public static <T> T findPackageClzAndReflect(Class<?> superClz$, String tPackge$, Object... initArgs$)
-            throws IllegalAccessException {
-        List<Class<?>> clzList = findSubClzList(superClz$, tPackge$);
-
-        if (clzList.isEmpty())
-            throw new IllegalAccessException("No Subclass found of class: " + superClz$ + " in package: " + tPackge$);
-
-        if (clzList.size() > 1)
-            throw new IllegalAccessException("More Than One Subclass found of class: " + superClz$ + " in package: " + tPackge$);
-
-        T t = Reflect.onClass(clzList.get(0)).create(initArgs$).get();
-
-        return t;
-    }
-
-    public static <T> T findClzAndReflect(Class<?> superClz$, Object... initArgs$)
-            throws IllegalAccessException {
-        List<Class<?>> clzList = findSubClzList(superClz$);
-
-        if (clzList.isEmpty())
-            throw new IllegalAccessException("No Subclass found of class: " + superClz$);
-
-        if (clzList.size() > 1) {
-            StringBuilder builder = new StringBuilder();
-            builder.append("More Than One implementation found of class: ")
-                    .append(superClz$).append("\n");
-            clzList.forEach(clz -> builder.append("\t").append(clz.getName()).append("\n"));
-            throw new IllegalAccessException(builder.toString());
-
-        }
-
-        T t = Reflect.onClass(clzList.get(0)).create(initArgs$).get();
-
-        return t;
-    }
 
     public static String throwableString(Throwable throwable) {
         StringWriter strWrt = new StringWriter();

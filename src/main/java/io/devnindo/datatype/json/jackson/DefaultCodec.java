@@ -39,7 +39,6 @@ import java.util.Map;
 import static io.devnindo.datatype.util.JsonUtil.*;
 import static java.time.format.DateTimeFormatter.ISO_INSTANT;
 
-@Deprecated
 public class DefaultCodec {
 
     private static final JsonFactory jacksonFactory = new JsonFactory();

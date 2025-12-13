@@ -4,12 +4,14 @@ import io.devnindo.datatype.json.JsonObject;
 import io.devnindo.datatype.schema.BeanSchema;
 import io.devnindo.datatype.schema.DataDiff;
 import io.devnindo.datatype.schema.SchemaField;
+import io.devnindo.datatype.schema.SchemaGen;
 import io.devnindo.datatype.util.Either;
 import io.devnindo.datatype.validation.ObjViolation;
 import io.devnindo.datatype.validation.Violation;
 
 import java.util.List;
 
+@SchemaGen
 public class $Address extends BeanSchema<Address> {
     public static final SchemaField<Address, String> city;
     public static final SchemaField<Address, List<String>> road_list;

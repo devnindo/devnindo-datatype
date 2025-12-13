@@ -18,9 +18,11 @@ package io.devnindo.datatype.schema;
 import io.devnindo.datatype.json.JsonObject;
 import io.devnindo.datatype.schema.typeresolver.TypeResolverFactory;
 import io.devnindo.datatype.schema.typeresolver.TypeResolver;
+import io.devnindo.datatype.util.ClzUtil;
 import io.devnindo.datatype.util.Either;
 import io.devnindo.datatype.validation.ObjViolation;
 import io.devnindo.datatype.validation.Violation;
+import org.atteo.classindex.IndexSubclasses;
 
 import java.io.IOException;
 import java.io.InvalidObjectException;
@@ -32,6 +34,7 @@ import java.util.Map;
 import java.util.function.BiConsumer;
 import java.util.function.Function;
 
+
 public abstract class BeanSchema<T extends DataBean> {
 
     private static final Map<String, BeanSchema> SCHEMA_MAP;
@@ -40,6 +43,7 @@ public abstract class BeanSchema<T extends DataBean> {
     static {
         SCHEMA_MAP = new HashMap<>();
         FIELD_MAP = new HashMap<>();
+        System.out.println("#Scanned: \n #=>"+ClzUtil.scanClzList(BeanSchema.class));
     }
 
     protected static final void regSchema(BeanSchema beanSchema, SchemaField... fieldArr){
@@ -62,6 +66,9 @@ public abstract class BeanSchema<T extends DataBean> {
         return FIELD_MAP.get(dataClzName+"."+name);
     }
 
+    public static void printSchemaMap(){
+        System.out.println(SCHEMA_MAP);
+    }
 
     public static <D extends DataBean> BeanSchema<D> of(Class<D> modelClz$) {
         BeanSchema schema = SCHEMA_MAP.get(modelClz$.getName());

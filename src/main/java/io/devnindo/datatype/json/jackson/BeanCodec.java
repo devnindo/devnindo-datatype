@@ -6,7 +6,7 @@ import io.devnindo.datatype.json.DecodeException;
 
 import java.io.IOException;
 
-public class LazyCodec {
+public class BeanCodec {
 
     private static final JsonFactory jacksonFactory = new JsonFactory();
 
@@ -31,5 +31,7 @@ public class LazyCodec {
             throw new DecodeException("Failed to decode:" + e.getMessage(), e);
         }
     }
+
+
 
 }
