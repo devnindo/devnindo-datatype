@@ -1,7 +1,7 @@
 package io.devnindo.datatype;
 
-import io.devnindo.datatype.schema.Address;
-import io.devnindo.datatype.schema.DataSample;
+import io.devnindo.datatype.schematest.Address;
+import io.devnindo.datatype.schematest.DataSample;
 import io.devnindo.datatype.json.JsonArray;
 import io.devnindo.datatype.json.JsonObject;
 import io.devnindo.datatype.schema.typeresolver.TypeResolverFactory;

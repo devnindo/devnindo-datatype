@@ -6,7 +6,7 @@ plugins {
 }
 
 group = 'io.devnindo.core'
-version = '0.9.8-dev'
+version = '0.9.9-dev' // NOTE: to align with git branch:dev
 
 apply from: 'remote-repo.gradle'
 

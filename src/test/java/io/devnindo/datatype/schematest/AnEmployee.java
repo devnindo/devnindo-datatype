@@ -1,5 +1,7 @@
-package io.devnindo.datatype.schema;
+package io.devnindo.datatype.schematest;
 
+
+import io.devnindo.datatype.schema.AField;
 
 public class AnEmployee extends APerson {
     Integer salary;
@@ -11,10 +13,6 @@ public class AnEmployee extends APerson {
         return salary;
     }
 
-    public AnEmployee setSalary(Integer salary) {
-        this.salary = salary;
-        return this;
-    }
 
     public APerson getManager() {
         return manager;
@@ -23,5 +21,14 @@ public class AnEmployee extends APerson {
     @AField
     public Boolean shouldRetire() {
         return age > 50;
+    }
+
+
+    public AnEmployee setSalary(Integer salary) {
+        this.salary = salary;
+        return this;
+    }
+    public void setManager(APerson manager) {
+        this.manager = manager;
     }
 }

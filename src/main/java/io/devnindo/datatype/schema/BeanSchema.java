@@ -29,6 +29,7 @@ import java.io.ObjectStreamException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.function.BiConsumer;
 import java.util.function.Function;
 
 public abstract class BeanSchema<T extends DataBean> {
@@ -61,7 +62,7 @@ public abstract class BeanSchema<T extends DataBean> {
         return FIELD_MAP.get(dataClzName+"."+name);
     }
 
-    @Deprecated
+
     public static <D extends DataBean> BeanSchema<D> of(Class<D> modelClz$) {
         BeanSchema schema = SCHEMA_MAP.get(modelClz$.getName());
         if (schema == null)
@@ -90,33 +91,33 @@ public abstract class BeanSchema<T extends DataBean> {
     }
 
     protected static final <D extends DataBean, VAL> SchemaField<D, VAL>
-    plainField(String name$, Function<D, VAL> getter$, Class<VAL> typeClz$, boolean required$) {
+    plainField(String name$, Function<D, VAL> getter$, BiConsumer<D, VAL> setter$, Class<VAL> typeClz$, boolean required$) {
         TypeResolver resolverIF = TypeResolverFactory.plain(typeClz$);
-        return new SchemaField<>(name$, getter$, resolverIF, required$);
+        return new SchemaField<>(name$, getter$, setter$, resolverIF, required$);
     }
 
     protected static final <D extends DataBean, VAL> SchemaField<D, List<VAL>>
-    plainListField(String name$, Function<D, List<VAL>> getter$, Class<VAL> typeClz$, boolean required$) {
+    plainListField(String name$, Function<D, List<VAL>> getter$, BiConsumer<D, List<VAL>> setter$, Class<VAL> typeClz$, boolean required$) {
         TypeResolver resolverIF = TypeResolverFactory.plainDataList(typeClz$);
-        return new SchemaField<>(name$, getter$, resolverIF, required$);
+        return new SchemaField<>(name$, getter$, setter$, resolverIF, required$);
     }
 
     protected static final <D extends DataBean, VAL extends DataBean> SchemaField<D, VAL>
-    beanField(String name$, Function<D, VAL> getter$, Class<VAL> typeClz$, boolean required$) {
-        TypeResolver resolverIF = TypeResolverFactory.beanType(typeClz$);
-        return new SchemaField<>(name$, getter$, resolverIF, required$);
+    beanField(String name, Function<D, VAL> getter, BiConsumer<D, VAL> setter, Class<VAL> typeClz, boolean required) {
+        TypeResolver resolverIF = TypeResolverFactory.beanType(typeClz);
+        return new SchemaField<>(name, getter, setter, resolverIF, required);
     }
 
     protected static final <D extends DataBean, VAL extends DataBean> SchemaField<D, List<VAL>>
-    beanListField(String name$, Function<D, List<VAL>> getter$, Class<VAL> typeClz$, boolean required$) {
+    beanListField(String name$, Function<D, List<VAL>> getter$, BiConsumer<D, List<VAL>> setter$, Class<VAL> typeClz$, boolean required$) {
         TypeResolver resolverIF = TypeResolverFactory.beanList(typeClz$);
-        return new SchemaField<>(name$, getter$, resolverIF, required$);
+        return new SchemaField<>(name$, getter$, setter$, resolverIF, required$);
     }
 
     protected static final <D extends DataBean, VAL extends Enum<VAL>> SchemaField<D, VAL>
-    enumField(String name$, Function<D, VAL> getter$, Class<VAL> enumType$, boolean required$) {
+    enumField(String name$, Function<D, VAL> getter, BiConsumer<D, VAL> setter, Class<VAL> enumType$, boolean required$) {
         TypeResolver resolverIF = TypeResolverFactory.enumType(enumType$);
-        return new SchemaField<>(name$, getter$, resolverIF, required$);
+        return new SchemaField<>(name$, getter, setter, resolverIF, required$);
     }
 
 

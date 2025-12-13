@@ -1,7 +1,7 @@
 package io.devnindo.datatype;
 
-import io.devnindo.datatype.schema.$APerson;
-import io.devnindo.datatype.schema.Gender;
+import io.devnindo.datatype.schematest.$APerson;
+import io.devnindo.datatype.schematest.Gender;
 import io.devnindo.datatype.json.JsonObject;
 import io.devnindo.datatype.validation.Violation;
 import org.junit.jupiter.api.Assertions;

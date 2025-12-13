@@ -1,4 +1,4 @@
-package io.devnindo.datatype.schema;
+package io.devnindo.datatype.schematest;
 
 
 import io.devnindo.datatype.json.JsonArray;

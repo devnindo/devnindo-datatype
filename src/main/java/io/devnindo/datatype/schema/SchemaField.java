@@ -28,15 +28,17 @@ import java.util.function.Function;
 public final class SchemaField<D extends DataBean, VAL> {
     public final String name;
     public final Function<D, VAL> accessor;
+    public final BiConsumer<D, VAL> setter;
     public final TypeResolver<VAL> typeResolver;
     private final boolean required;
 
 
-    SchemaField(String name, Function<D, VAL> accessor, TypeResolver<VAL> typeResolver, boolean required) {
+    SchemaField(String name, Function<D, VAL> accessor, BiConsumer<D, VAL> setter, TypeResolver<VAL> typeResolver, boolean required) {
         this.name = name;
         this.accessor = accessor;
         this.typeResolver = typeResolver;
         this.required = required;
+        this.setter = setter;
 
     }
 
