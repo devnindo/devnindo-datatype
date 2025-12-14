@@ -1,17 +1,13 @@
 package io.devnindo.datatype.schematest;
 
 import io.devnindo.datatype.json.JsonObject;
-import io.devnindo.datatype.schema.BeanSchema;
-import io.devnindo.datatype.schema.DataDiff;
-import io.devnindo.datatype.schema.SchemaField;
-import io.devnindo.datatype.schema.SchemaGen;
+import io.devnindo.datatype.schema.*;
 import io.devnindo.datatype.util.Either;
 import io.devnindo.datatype.validation.ObjViolation;
 import io.devnindo.datatype.validation.Violation;
 
 import java.util.List;
 
-@SchemaGen
 public class $Address extends BeanSchema<Address> {
     public static final SchemaField<Address, String> city;
     public static final SchemaField<Address, List<String>> road_list;
@@ -19,9 +15,11 @@ public class $Address extends BeanSchema<Address> {
     static {
          city = plainField("city", Address::getCity, Address::setCity, String.class, false);
          road_list = plainListField("road_list", Address::getRoadList, Address::setRoadList, String.class, false);
-         regSchema(new $Address(), city, road_list);
+         regSchema(Address.class, new $Address(), city, road_list);
     }
-    
+
+
+
     @Override
     public Either<Violation, Address> fromJsonObj(JsonObject data) {
         Either<Violation, String> cityEither = city.fromJson(data);

@@ -16,19 +16,16 @@
 package io.devnindo.datatype.util;
 
 
-import org.atteo.classindex.ClassIndex;
 
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
+import java.util.ArrayList;
+import java.util.List;
 
 public class ClzUtil {
 
-
-    public static Iterable<Class> scanClzList(Class superClz$) {
-        return ClassIndex.getSubclasses(superClz$);
-    }
 
 
     public static String throwableString(Throwable throwable) {
@@ -46,4 +43,3 @@ public class ClzUtil {
     }
 
 }
-

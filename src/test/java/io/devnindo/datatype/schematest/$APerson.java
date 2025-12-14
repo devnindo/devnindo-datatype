@@ -1,17 +1,13 @@
 package io.devnindo.datatype.schematest;
 
 import io.devnindo.datatype.json.JsonObject;
-import io.devnindo.datatype.schema.BeanSchema;
-import io.devnindo.datatype.schema.DataDiff;
-import io.devnindo.datatype.schema.SchemaField;
-import io.devnindo.datatype.schema.SchemaGen;
+import io.devnindo.datatype.schema.*;
 import io.devnindo.datatype.util.Either;
 import io.devnindo.datatype.validation.ObjViolation;
 import io.devnindo.datatype.validation.Violation;
 
 import java.util.List;
 
-@SchemaGen
 public class $APerson extends BeanSchema<APerson> {
 
     public static final SchemaField<APerson, Gender> gender;
@@ -32,14 +28,14 @@ public class $APerson extends BeanSchema<APerson> {
         age = plainField("age", APerson::getAge, APerson::setAge, Integer.class, true);
         fieldArr = new SchemaField[]{gender, address_list, employer, id, age};
 
-        BeanSchema.regSchema(new $APerson(), fieldArr);
+        BeanSchema.regSchema(APerson.class, new $APerson(), fieldArr);
     }
 
 
     @Override
     public Either<Violation, APerson> fromJsonObj(JsonObject data) {
         APerson bean = new APerson();
-        ObjViolation violation = new ObjViolation("SCHEMA_VIOLATION");
+        ObjViolation violation = new ObjViolation("SCHEMA::" + APerson.class.getSimpleName());;
 
         // need to change implementation: required check & type-check with fast-formatting
         for (SchemaField f : fieldArr){

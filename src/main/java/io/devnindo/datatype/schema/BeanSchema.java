@@ -22,33 +22,55 @@ import io.devnindo.datatype.util.ClzUtil;
 import io.devnindo.datatype.util.Either;
 import io.devnindo.datatype.validation.ObjViolation;
 import io.devnindo.datatype.validation.Violation;
-import org.atteo.classindex.IndexSubclasses;
 
-import java.io.IOException;
-import java.io.InvalidObjectException;
-import java.io.ObjectInputStream;
-import java.io.ObjectStreamException;
+import javax.annotation.processing.Generated;
+import javax.xml.crypto.Data;
+import java.io.*;
+import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.function.BiConsumer;
 import java.util.function.Function;
 
-
 public abstract class BeanSchema<T extends DataBean> {
 
     private static final Map<String, BeanSchema> SCHEMA_MAP;
     private static final Map<String, SchemaField> FIELD_MAP;
+    public static final String SCHEMA_IDX = ".schema_index";
 
     static {
         SCHEMA_MAP = new HashMap<>();
         FIELD_MAP = new HashMap<>();
-        System.out.println("#Scanned: \n #=>"+ClzUtil.scanClzList(BeanSchema.class));
+        scanIndex();
     }
 
-    protected static final void regSchema(BeanSchema beanSchema, SchemaField... fieldArr){
+    // using class.forName to trigger static initializer of each schema
+    // taking advantage of compiler ensurance single time execution of static context
+    private static final void scanIndex(){
+        try (InputStream inputStream = BeanSchema.class.getResourceAsStream("/" + SCHEMA_IDX);
+             BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream, StandardCharsets.UTF_8))) {
+
+            if (inputStream == null) {
+                System.out.println("/resource/" + SCHEMA_IDX+" not found");
+            } else {
+                reader.lines().forEach(str -> {
+                try {
+                    Class.forName(str);
+                } catch (ClassNotFoundException e) {
+                    throw new RuntimeException(e);
+                }
+                });
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    protected static final void regSchema(Class<? extends DataBean> beanClz, BeanSchema beanSchema, SchemaField... fieldArr){
         String clzName = beanSchema.getClass().getName();
-        SCHEMA_MAP.put(clzName, beanSchema);
+        //System.out.println(beanSchema.getClass().getA);
+        SCHEMA_MAP.put(beanClz.getName(), beanSchema);
         for(SchemaField f : fieldArr){
             FIELD_MAP.put(clzName+"."+f.name, f);
         }
@@ -89,14 +111,6 @@ public abstract class BeanSchema<T extends DataBean> {
         return schema;
     }
 
-
-
-
-    protected static final <T extends DataBean> ObjViolation newViolation(Class<T> beanClz) {
-
-        return new ObjViolation("SCHEMA::" + beanClz.getSimpleName());
-    }
-
     protected static final <D extends DataBean, VAL> SchemaField<D, VAL>
     plainField(String name$, Function<D, VAL> getter$, BiConsumer<D, VAL> setter$, Class<VAL> typeClz$, boolean required$) {
         TypeResolver resolverIF = TypeResolverFactory.plain(typeClz$);
@@ -126,7 +140,6 @@ public abstract class BeanSchema<T extends DataBean> {
         TypeResolver resolverIF = TypeResolverFactory.enumType(enumType$);
         return new SchemaField<>(name$, getter, setter, resolverIF, required$);
     }
-
 
 
     public abstract JsonObject toJsonObj(T dataBean$);
