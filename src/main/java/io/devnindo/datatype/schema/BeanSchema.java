@@ -17,6 +17,7 @@ package io.devnindo.datatype.schema;
 
 import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.core.JsonToken;
+import io.devnindo.datatype.json.BeanCodec;
 import io.devnindo.datatype.json.DefaultCodec;
 import io.devnindo.datatype.json.JsonObject;
 import io.devnindo.datatype.schema.typeresolver.TypeResolverFactory;
@@ -32,6 +33,7 @@ import javax.xml.validation.Schema;
 import java.io.*;
 import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
+import java.util.IdentityHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.function.BiConsumer;
@@ -40,13 +42,11 @@ import java.util.function.Supplier;
 
 public abstract class BeanSchema<T extends DataBean> {
 
-    private static final Map<String, BeanSchema> SCHEMA_MAP;
-    private static final Map<String, SchemaField> FIELD_MAP;
+    private static final Map<Class<? extends DataBean>, BeanSchema> SCHEMA_MAP;
     public static final String SCHEMA_IDX = ".schema_index";
 
     static {
-        SCHEMA_MAP = new HashMap<>();
-        FIELD_MAP = new HashMap<>();
+        SCHEMA_MAP = new IdentityHashMap<>();
         scanIndex();
     }
 
@@ -75,18 +75,13 @@ public abstract class BeanSchema<T extends DataBean> {
     protected static final void regSchema(Class<? extends DataBean> beanClz, BeanSchema beanSchema, SchemaField... fieldArr){
         String clzName = beanSchema.getClass().getName();
         //System.out.println(beanSchema.getClass().getA);
-        SCHEMA_MAP.put(beanClz.getName(), beanSchema);
-        for(SchemaField f : fieldArr){
-            FIELD_MAP.put(clzName+"."+f.name, f);
-        }
+        SCHEMA_MAP.put(beanClz, beanSchema);
+        SCHEMA_MAP.put(beanClz, beanSchema);
+
     }
 
     protected static final BeanSchema getSchema(String clzName){
         return SCHEMA_MAP.get(clzName);
-    }
-
-    protected static final SchemaField getField(String dataClzName, String name){
-        return FIELD_MAP.get(dataClzName+"."+name);
     }
 
     public static void printSchemaMap(){
@@ -121,48 +116,8 @@ public abstract class BeanSchema<T extends DataBean> {
 
     public abstract String toJsonStr(T dataBean$);
 
-
-
     // kept for backward compatibility
     public abstract Either<Violation, T> fromJsonObj(JsonObject js);
-
-    //json to object
-    public Either<Violation, T> fromJsonStr(String reqObj){
-
-        JsonParser parser = DefaultCodec.createParser(reqObj);
-        T bean = newBean().get();
-        Map<String, SchemaField> fmap = fieldMap();
-
-        try{
-            if (parser.nextToken() != JsonToken.START_OBJECT) {
-                return Either.left(Violation.withCtx("VALID_JSON", "INVALID_JSON_STRING"));
-            }
-
-            while (parser.nextToken() != JsonToken.END_OBJECT) {
-                // The current token should be the field name (key)
-                if (parser.currentToken() == JsonToken.FIELD_NAME) {
-                    String fieldName = parser.getCurrentName();
-                    // Move to the next token, which is the value
-                    Object val = parser.nextToken();
-
-                }
-            }
-
-
-        } catch(IOException excp){
-            return Either.left(Violation.of("VALID_JSON").withCtx("PARSE_ERROR", excp.getMessage()));
-        }
-
-        return Either.right(bean);
-    }
-
-    void  fromJsonObj(JsonParser parser, T t, String fieldName, Object fieldVal){
-        SchemaField f = fieldMap().get(fieldName);
-        // if field value is object type
-        // find schema:
-
-    }
-
 
 
     public abstract DataDiff<T> diff(T from$, T to$);

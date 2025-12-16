@@ -1,36 +1,58 @@
 package io.devnindo.datatype.json;
 
-import com.fasterxml.jackson.core.JsonFactory;
 import com.fasterxml.jackson.core.JsonParser;
+import com.fasterxml.jackson.core.JsonToken;
+import io.devnindo.datatype.schema.BeanSchema;
+import io.devnindo.datatype.schema.DataBean;
+import io.devnindo.datatype.schema.SchemaField;
+import io.devnindo.datatype.util.Either;
+import io.devnindo.datatype.validation.ObjViolation;
+import io.devnindo.datatype.validation.Violation;
 
 import java.io.IOException;
+import java.util.Map;
 
 public class BeanCodec {
 
-    private static final JsonFactory jacksonFactory = new JsonFactory();
-
-    static {
-        // Non-standard JSON but we allow C style comments in our JSON
-        jacksonFactory.configure(JsonParser.Feature.ALLOW_COMMENTS, true);
-        jacksonFactory.configure(JsonParser.Feature.ALLOW_UNQUOTED_FIELD_NAMES, true);
+    public static final <D extends DataBean> Either<Violation, D> parseBean(String jsStr, Class<D> beanClz){
+        JsonParser parser = JsonBag.createParser(jsStr);
+        return parseBean(parser, beanClz);
     }
 
-    public static JsonParser createParser(String str) {
-        try {
-            return jacksonFactory.createParser(str);
-        } catch (IOException e) {
-            throw new DecodeException("Failed to decode:" + e.getMessage(), e);
+    public static final <D extends DataBean> Either<Violation, D> parseBean(JsonParser parser, Class<D> beanClz){
+        BeanSchema<D> schema = BeanSchema.of(beanClz);
+        Map<String, SchemaField> fmap = schema.fieldMap();
+
+        try{
+            if (parser.nextToken() != JsonToken.START_OBJECT) {
+                return Either.left(Violation.withCtx("VALID_JSON", "INVALID_JSON"));
+            }
+
+            DataBean owner = schema.newBean().get();
+            ObjViolation violation = new ObjViolation("SCHEMA::"+beanClz.getSimpleName());
+            while (parser.nextToken() != JsonToken.END_OBJECT) {
+                // The current token should be the field name (key)
+                if (parser.currentToken() == JsonToken.FIELD_NAME) {
+                    String fieldName = parser.getCurrentName();
+                    SchemaField field = fmap.get(fieldName);
+                    if (field.isBean()) {
+                        Either<Violation, Object>  valEither = parseBean(parser, field.type);
+                        if (valEither.isLeft())
+                        { // first-fail on violation
+                            violation.check(field, valEither);
+                            return Either.left(violation);
+                        }
+                        field.setter.accept(owner, valEither.right());
+                    } else if (field.isBean() && field.isList){
+
+                    }
+                }
+            }
+
+
+        } catch(IOException excp){
+            return Either.left(Violation.of("VALID_JSON").withCtx("PARSE_ERROR", excp.getMessage()));
         }
     }
-
-    public static JsonParser createParser(byte[] byteData) {
-        try {
-            return jacksonFactory.createParser(byteData);
-        } catch (IOException e) {
-            throw new DecodeException("Failed to decode:" + e.getMessage(), e);
-        }
-    }
-
-
 
 }

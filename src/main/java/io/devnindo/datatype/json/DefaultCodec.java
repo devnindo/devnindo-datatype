@@ -186,11 +186,12 @@ public class DefaultCodec {
             if (tokenId == JsonTokenId.ID_FIELD_NAME) {
                 throw new UnsupportedOperationException();
             } else if (tokenId == JsonTokenId.ID_END_ARRAY) {
-                return array;
+                return array; // return as we reach to end of array
             }
             Object value = parseAny(parser);
             array.add(value);
         }
+
     }
 
     static void close(Closeable parser) {

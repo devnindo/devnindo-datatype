@@ -25,25 +25,26 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Consumer;
 
-public class DataListResolver<T> implements TypeResolver<List<T>> {
+public class PlainListResolver<T> implements TypeResolver<List<T>> {
     private final Violation listTypeViolation;
     // Integer, String, Double, JsonObject
     Class<T> dataType;
 
-    public DataListResolver(Class<T> dataType$) {
+    public PlainListResolver(Class<T> dataType$) {
         dataType = dataType$;
         listTypeViolation = TypeViolations.plainDataList(dataType);
     }
 
     @Override
     public Either<Violation, List<T>> evalJsonVal(Object val) {
-        if (val instanceof JsonArray == false)
+        // null check should have already be done
+        if (val instanceof String)
             return Either.left(listTypeViolation);
         JsonArray array = (JsonArray) val;
         for (int idx = 0; idx < array.size(); idx++) {
             Object obj = array.getValue(idx);
             if (obj == null) continue;
-            if (dataType.getName().equals(obj.getClass().getName()) == false)
+            if (dataType.isAssignableFrom(obj.getClass()) == false)
                 return Either.left(listTypeViolation);
         }
 

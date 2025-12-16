@@ -15,19 +15,10 @@
  */
 package io.devnindo.datatype.schema.typeresolver;
 
-import io.devnindo.datatype.json.JsonArray;
-import io.devnindo.datatype.json.JsonObject;
-import io.devnindo.datatype.schema.DataBean;
-import io.devnindo.datatype.schema.typeresolver.jsons.JsonArrayResolver;
-import io.devnindo.datatype.schema.typeresolver.jsons.JsonObjectResolver;
-import io.devnindo.datatype.schema.typeresolver.lists.BeanListResolver;
-import io.devnindo.datatype.schema.typeresolver.lists.DataListResolver;
+import io.devnindo.datatype.schema.typeresolver.lists.PlainListResolver;
 import io.devnindo.datatype.schema.typeresolver.literals.*;
 
 import java.time.Instant;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 
 
 @Deprecated
@@ -40,81 +31,15 @@ public final class TypeResolverFactory {
     public static final TypeResolver BOOLEAN = new BooleanResolver();
     public static final TypeResolver INSTANT = new InstantResolver();
 
-    public static final TypeResolver LIST_INT = new DataListResolver<>(Integer.class);
-    public static final TypeResolver LIST_LONG = new DataListResolver<>(Long.class);
-    public static final TypeResolver LIST_DOUBLE = new DataListResolver<>(Double.class);
-    public static final TypeResolver LIST_STRING = new DataListResolver<>(String.class);
-    public static final TypeResolver LIST_BOOLEAN = new DataListResolver<>(Boolean.class);
-    public static final TypeResolver LIST_INSTANT = new DataListResolver<>(Instant.class);
-    public static final TypeResolver LIST_VAL = new DataListResolver<>(Object.class);
+    public static final TypeResolver LIST_INT = new PlainListResolver<>(Integer.class);
+    public static final TypeResolver LIST_LONG = new PlainListResolver<>(Long.class);
+    public static final TypeResolver LIST_DOUBLE = new PlainListResolver<>(Double.class);
+    public static final TypeResolver LIST_STRING = new PlainListResolver<>(String.class);
+    public static final TypeResolver LIST_BOOLEAN = new PlainListResolver<>(Boolean.class);
+    public static final TypeResolver LIST_INSTANT = new PlainListResolver<>(Instant.class);
+    public static final TypeResolver LIST_VAL = new PlainListResolver<>(Object.class);
 
 
-    private static final Map<String, TypeResolver> plainMap;
-    private static final Map<String, TypeResolver> plainListMap;
-
-    private static final Map<String, TypeResolver> enumMap;
-    private static final Map<String, TypeResolver> beanMap;
-    private static final Map<String, TypeResolver> beanListMap;
-
-    static {
-        plainMap = new HashMap<>();
-        enumMap = new HashMap<>();
-        beanMap = new HashMap<>();
-        plainListMap = new HashMap<>();
-        beanListMap = new HashMap<>();
-
-        plainMap.put(Integer.class.getName(), new IntegerResolver());
-        plainMap.put(Long.class.getName(), new LongResolver());
-        plainMap.put(String.class.getName(), new StringResolver());
-        plainMap.put(Double.class.getName(), new DoubleResolver());
-        plainMap.put(Boolean.class.getName(), new BooleanResolver());
-        plainMap.put(Instant.class.getName(), new InstantResolver());
-        plainMap.put(JsonObject.class.getName(), new JsonObjectResolver());
-        plainMap.put(JsonArray.class.getName(), new JsonArrayResolver());
-
-        plainListMap.put(Integer.class.getName(), new DataListResolver(Integer.class));
-        plainListMap.put(String.class.getName(), new DataListResolver(String.class));
-        plainListMap.put(JsonObject.class.getName(), new DataListResolver(JsonObject.class));
-
-
-    }
-
-    public static final <T> TypeResolver<T> plain(Class<T> typeClz$) {
-        return plainMap.get(typeClz$.getName());
-    }
-
-
-    public static final <T> TypeResolver<List<T>> plainDataList(Class<T> typeClz$) {
-        return plainListMap.get(typeClz$.getName());
-    }
-
-    public static final <T extends Enum<T>> TypeResolver<T> enumType(Class<T> enumType$) {
-        TypeResolver<T> resolver = enumMap.get(enumType$.getName());
-        if (resolver == null) {
-            resolver = new EnumResolver<>(enumType$);
-            enumMap.put(enumType$.getName(), resolver);
-        }
-        return resolver;
-    }
-
-    public static final <T extends DataBean> TypeResolver<T> beanType(Class<T> beanType) {
-        TypeResolver<T> resolver = beanMap.get(beanType.getName());
-        if (resolver == null) {
-            resolver = new BeanResolver<>(beanType);
-            beanMap.put(beanType.getName(), resolver);
-        }
-        return resolver;
-    }
-
-
-    public static final <T extends DataBean> TypeResolver<List<T>> beanList(Class<T> beanType) {
-        TypeResolver<List<T>> resolver = beanListMap.get(beanType.getName());
-        if (resolver == null) {
-            resolver = new BeanListResolver<>(beanType);
-            beanListMap.put(beanType.getName(), resolver);
-        }
-        return resolver;
-    }
 
 
 }

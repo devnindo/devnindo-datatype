@@ -54,7 +54,7 @@ public abstract class SchemaField<D extends DataBean, VAL> {
 
 
     public Either<Violation, VAL> resolve(Object val){
-
+        throw new UnsupportedOperationException();
     }
 
 
