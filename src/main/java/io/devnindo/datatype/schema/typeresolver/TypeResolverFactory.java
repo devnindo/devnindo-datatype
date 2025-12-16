@@ -30,7 +30,25 @@ import java.util.List;
 import java.util.Map;
 
 
+@Deprecated
 public final class TypeResolverFactory {
+
+    public static final TypeResolver INT = new IntegerResolver();
+    public static final TypeResolver LONG = new LongResolver();
+    public static final TypeResolver DOUBLE = new DoubleResolver();
+    public static final TypeResolver STRING = new StringResolver();
+    public static final TypeResolver BOOLEAN = new BooleanResolver();
+    public static final TypeResolver INSTANT = new InstantResolver();
+
+    public static final TypeResolver LIST_INT = new DataListResolver<>(Integer.class);
+    public static final TypeResolver LIST_LONG = new DataListResolver<>(Long.class);
+    public static final TypeResolver LIST_DOUBLE = new DataListResolver<>(Double.class);
+    public static final TypeResolver LIST_STRING = new DataListResolver<>(String.class);
+    public static final TypeResolver LIST_BOOLEAN = new DataListResolver<>(Boolean.class);
+    public static final TypeResolver LIST_INSTANT = new DataListResolver<>(Instant.class);
+    public static final TypeResolver LIST_VAL = new DataListResolver<>(Object.class);
+
+
     private static final Map<String, TypeResolver> plainMap;
     private static final Map<String, TypeResolver> plainListMap;
 

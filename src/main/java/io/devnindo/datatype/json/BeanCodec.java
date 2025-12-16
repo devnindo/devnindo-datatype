@@ -1,8 +1,7 @@
-package io.devnindo.datatype.json.jackson;
+package io.devnindo.datatype.json;
 
 import com.fasterxml.jackson.core.JsonFactory;
 import com.fasterxml.jackson.core.JsonParser;
-import io.devnindo.datatype.json.DecodeException;
 
 import java.io.IOException;
 

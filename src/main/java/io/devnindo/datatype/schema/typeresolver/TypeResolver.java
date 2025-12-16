@@ -30,5 +30,6 @@ public interface TypeResolver<T> {
 
     public T diff(T from, T to, Consumer changeConsumer);
 
+
 }
 

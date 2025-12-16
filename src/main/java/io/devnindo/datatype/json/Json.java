@@ -15,8 +15,6 @@
  */
 package io.devnindo.datatype.json;
 
-import io.devnindo.datatype.json.jackson.DefaultCodec;
-
 import java.nio.charset.StandardCharsets;
 
 public interface Json {

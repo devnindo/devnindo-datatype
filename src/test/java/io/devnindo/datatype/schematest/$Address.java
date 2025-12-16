@@ -46,8 +46,8 @@ public class $Address extends BeanSchema<Address> {
     @Override
     public JsonObject toJsonObj(Address bean) {
         JsonObject js = new JsonObject();
-        js.put(city.name, city.toJsonVal(bean));
-        js.put(road_list.name, road_list.toJsonVal(bean));
+        js.put(city.name, city.toJson(bean));
+        js.put(road_list.name, road_list.toJson(bean));
         return js;
     }
 

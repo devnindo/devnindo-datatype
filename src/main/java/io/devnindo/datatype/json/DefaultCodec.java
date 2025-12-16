@@ -22,9 +22,8 @@
  *
  * SPDX-License-Identifier: EPL-2.0 OR Apache-2.0
  */
-package io.devnindo.datatype.json.jackson;
+package io.devnindo.datatype.json;
 
-import io.devnindo.datatype.json.*;
 import com.fasterxml.jackson.core.*;
 
 import java.io.*;
@@ -41,13 +40,7 @@ import static java.time.format.DateTimeFormatter.ISO_INSTANT;
 
 public class DefaultCodec {
 
-    private static final JsonFactory jacksonFactory = new JsonFactory();
 
-    static {
-        // Non-standard JSON but we allow C style comments in our JSON
-        jacksonFactory.configure(JsonParser.Feature.ALLOW_COMMENTS, true);
-        jacksonFactory.configure(JsonParser.Feature.ALLOW_UNQUOTED_FIELD_NAMES, true);
-    }
 
     /**
      * encode JsonObject or JsonArray to buffer
@@ -72,7 +65,7 @@ public class DefaultCodec {
   }*/
     public static JsonParser createParser(String str) {
         try {
-            return jacksonFactory.createParser(str);
+            return JsonBag.factory.createParser(str);
         } catch (IOException e) {
             throw new DecodeException("Failed to decode:" + e.getMessage(), e);
         }
@@ -80,7 +73,7 @@ public class DefaultCodec {
 
     public static JsonParser createParser(byte[] byteData) {
         try {
-            return jacksonFactory.createParser(byteData);
+            return JsonBag.factory.createParser(byteData);
         } catch (IOException e) {
             throw new DecodeException("Failed to decode:" + e.getMessage(), e);
         }
@@ -88,7 +81,7 @@ public class DefaultCodec {
 
     private static JsonGenerator createGenerator(Writer out, boolean pretty) {
         try {
-            JsonGenerator generator = jacksonFactory.createGenerator(out);
+            JsonGenerator generator = JsonBag.factory.createGenerator(out);
             if (pretty) {
                 generator.useDefaultPrettyPrinter();
             }
@@ -100,7 +93,7 @@ public class DefaultCodec {
 
     private static JsonGenerator createGenerator(OutputStream out, boolean pretty) {
         try {
-            JsonGenerator generator = jacksonFactory.createGenerator(out);
+            JsonGenerator generator = JsonBag.factory.createGenerator(out);
             if (pretty) {
                 generator.useDefaultPrettyPrinter();
             }

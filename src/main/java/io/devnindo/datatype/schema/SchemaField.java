@@ -17,42 +17,57 @@ package io.devnindo.datatype.schema;
 
 import io.devnindo.datatype.json.JsonObject;
 import io.devnindo.datatype.schema.typeresolver.TypeResolver;
+import io.devnindo.datatype.schema.typeresolver.TypeResolverFactory;
 import io.devnindo.datatype.util.Either;
 import io.devnindo.datatype.validation.Violation;
 import io.devnindo.datatype.validation.violations.LogicalViolations;
 
+import java.util.List;
 import java.util.function.BiConsumer;
 import java.util.function.Consumer;
 import java.util.function.Function;
 
-public final class SchemaField<D extends DataBean, VAL> {
+public abstract class SchemaField<D extends DataBean, VAL> {
     public final String name;
     public final Function<D, VAL> accessor;
     public final BiConsumer<D, VAL> setter;
-    public final TypeResolver<VAL> typeResolver;
-    private final boolean required;
+    public final boolean required;
+    public final Class type;
+    public final boolean isList;
 
 
-    SchemaField(String name, Function<D, VAL> accessor, BiConsumer<D, VAL> setter, TypeResolver<VAL> typeResolver, boolean required) {
+
+
+    SchemaField(String name, boolean required,  Class type, boolean isList, Function<D, VAL> accessor, BiConsumer<D, VAL> setter) {
         this.name = name;
-        this.accessor = accessor;
-        this.typeResolver = typeResolver;
         this.required = required;
+        this.type = type;
+        this.isList = isList;
+        this.accessor = accessor;
         this.setter = setter;
 
     }
 
-    public Either<Violation, VAL> fromJson(JsonObject jsObj) {
+    public boolean isBean(){
+        return (DataBean.class.isAssignableFrom(type));
+    }
+
+
+    public Either<Violation, VAL> resolve(Object val){
+
+    }
+
+
+    /*public Either<Violation, VAL> fromJson(JsonObject jsObj) {
         Object val = jsObj.getValue(name);
         if (val != null)
             return typeResolver.evalJsonVal(val);
         else if (required)
             return Either.left(LogicalViolations.notNull());
         else return Either.right(null);
-
     }
 
-    public Object toJsonVal(D dataBean) {
+    public Object toJson(D dataBean) {
         VAL val = accessor.apply(dataBean);
         if (val == null)
             return null;
@@ -67,5 +82,65 @@ public final class SchemaField<D extends DataBean, VAL> {
         return typeResolver.diff(fromVal, toVal, changeConsumer);
     }
 
+    public static final <D extends DataBean, VAL> SchemaField<D, VAL>
+    plainField(String name$, Function<D, VAL> getter$, BiConsumer<D, VAL> setter$, Class<VAL> typeClz$, boolean required$) {
+        TypeResolver resolverIF = TypeResolverFactory.plain(typeClz$);
+        return new SchemaField<>(name$, getter$, setter$, resolverIF, required$);
+    }
+
+    public static final <D extends DataBean, VAL> SchemaField<D, List<VAL>>
+    plainListField(String name$, Function<D, List<VAL>> getter$, BiConsumer<D, List<VAL>> setter$, Class<VAL> typeClz$, boolean required$) {
+        TypeResolver resolverIF = TypeResolverFactory.plainDataList(typeClz$);
+        return new SchemaField<>(name$, getter$, setter$, resolverIF, required$);
+    }
+
+    public static final <D extends DataBean, VAL extends DataBean> SchemaField<D, VAL>
+    beanField(String name, Function<D, VAL> getter, BiConsumer<D, VAL> setter, Class<VAL> typeClz, boolean required) {
+        TypeResolver resolverIF = TypeResolverFactory.beanType(typeClz);
+        return new SchemaField<>(name, getter, setter, resolverIF, required);
+    }
+
+    public static final <D extends DataBean, VAL extends DataBean> SchemaField<D, List<VAL>>
+    beanListField(String name$, Function<D, List<VAL>> getter$, BiConsumer<D, List<VAL>> setter$, Class<VAL> typeClz$, boolean required$) {
+        TypeResolver resolverIF = TypeResolverFactory.beanList(typeClz$);
+        return new SchemaField<>(name$, getter$, setter$, resolverIF, required$);
+    }
+
+    public static final <D extends DataBean, VAL extends Enum<VAL>> SchemaField<D, VAL>
+    enumField(String name$, Function<D, VAL> getter, BiConsumer<D, VAL> setter, Class<VAL> enumType$, boolean required$) {
+        TypeResolver resolverIF = TypeResolverFactory.enumType(enumType$);
+        return new SchemaField<>(name$, getter, setter, resolverIF, required$);
+    }*/
+
+
+    /*public static final <D extends DataBean, VAL> SchemaField<D, VAL>
+    plainField(String name$, Function<D, VAL> getter$, BiConsumer<D, VAL> setter$, Class<VAL> typeClz$, boolean required$) {
+        TypeResolver resolverIF = TypeResolverFactory.plain(typeClz$);
+        return new SchemaField<>(name$, getter$, setter$, resolverIF, required$);
+    }
+
+    public static final <D extends DataBean, VAL> SchemaField<D, List<VAL>>
+    plainListField(String name$, Function<D, List<VAL>> getter$, BiConsumer<D, List<VAL>> setter$, Class<VAL> typeClz$, boolean required$) {
+        TypeResolver resolverIF = TypeResolverFactory.plainDataList(typeClz$);
+        return new SchemaField<>(name$, getter$, setter$, resolverIF, required$);
+    }
+
+    public static final <D extends DataBean, VAL extends DataBean> SchemaField<D, VAL>
+    beanField(String name, Function<D, VAL> getter, BiConsumer<D, VAL> setter, Class<VAL> typeClz, boolean required) {
+        TypeResolver resolverIF = TypeResolverFactory.beanType(typeClz);
+        return new SchemaField<>(name, getter, setter, resolverIF, required);
+    }
+
+    public static final <D extends DataBean, VAL extends DataBean> SchemaField<D, List<VAL>>
+    beanListField(String name$, Function<D, List<VAL>> getter$, BiConsumer<D, List<VAL>> setter$, Class<VAL> typeClz$, boolean required$) {
+        TypeResolver resolverIF = TypeResolverFactory.beanList(typeClz$);
+        return new SchemaField<>(name$, getter$, setter$, resolverIF, required$);
+    }
+
+    public static final <D extends DataBean, VAL extends Enum<VAL>> SchemaField<D, VAL>
+    enumField(String name$, Function<D, VAL> getter, BiConsumer<D, VAL> setter, Class<VAL> enumType$, boolean required$) {
+        TypeResolver resolverIF = TypeResolverFactory.enumType(enumType$);
+        return new SchemaField<>(name$, getter, setter, resolverIF, required$);
+    }*/
 }
 

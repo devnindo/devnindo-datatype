@@ -5,87 +5,44 @@ import io.devnindo.datatype.schema.*;
 import io.devnindo.datatype.util.Either;
 import io.devnindo.datatype.validation.ObjViolation;
 import io.devnindo.datatype.validation.Violation;
-
+import static  io.devnindo.datatype.schema.SchemaField.*;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.function.Supplier;
 
 public class $APerson extends BeanSchema<APerson> {
 
-    public static final SchemaField<APerson, Gender> gender;
-    public static final SchemaField<APerson, Address> primary_address;
-    public static final SchemaField<APerson, List<Address>> address_list  ;
-    public static final SchemaField<APerson, APerson> employer;
-    public static final SchemaField<APerson, Long> id;
-    public static final SchemaField<APerson, Integer> age;
+    public static final SchemaField<APerson, Gender> gender = enumField("gender", APerson::getGender, APerson::setGender, Gender.class, false);
+    public static final SchemaField<APerson, Address> primary_address  = beanField("primary_address", APerson::getPrimaryAddress, APerson::setPrimaryAddress, Address.class, true);
+    public static final SchemaField<APerson, List<Address>> address_list = beanListField("address_list", APerson::getAddressList, null, Address.class, false);
+    public static final SchemaField<APerson, APerson> employer = beanField("employer", APerson::getEmployer, APerson::setEmployer, APerson.class, false);
+    public static final SchemaField<APerson, Long> id = plainField("id", APerson::getId, APerson::setId, Long.class, true);
+    public static final SchemaField<APerson, Integer> age = plainField("age", APerson::getAge, APerson::setAge, Integer.class, true);
 
-    private static final SchemaField[] fieldArr;
-
-    static {
-        gender = enumField("gender", APerson::getGender, APerson::setGender, Gender.class, false);
-        primary_address = beanField("primary_address", APerson::getPrimaryAddress, APerson::setPrimaryAddress, Address.class, true);
-        address_list = beanListField("address_list", APerson::getAddressList, null, Address.class, false);
-        employer = beanField("employer", APerson::getEmployer, APerson::setEmployer, APerson.class, false);
-        id = plainField("id", APerson::getId, APerson::setId, Long.class, true);
-        age = plainField("age", APerson::getAge, APerson::setAge, Integer.class, true);
-        fieldArr = new SchemaField[]{gender, address_list, employer, id, age};
-
-        BeanSchema.regSchema(APerson.class, new $APerson(), fieldArr);
-    }
-
-
-    @Override
-    public Either<Violation, APerson> fromJsonObj(JsonObject data) {
-        APerson bean = new APerson();
-        ObjViolation violation = new ObjViolation("SCHEMA::" + APerson.class.getSimpleName());;
-
-        // need to change implementation: required check & type-check with fast-formatting
-        for (SchemaField f : fieldArr){
-            Either<Violation, ?> valEither = f.fromJson(data);
-            if (valEither.isLeft())
-                return Either.left(violation.check(f, valEither));
-
-            f.setter.accept(bean, valEither.right());
+    private static final Map<String, SchemaField> fieldMap = new HashMap<>(6){{
+            put(gender.name, gender);
+            put(primary_address.name, primary_address);
+            put(address_list.name, address_list);
+            put(employer.name, employer);
+            put(id.name, id);
+            put(age.name, age);
         }
+    };
 
-         return Either.right(bean);
+    private static final Supplier<APerson> supplier = APerson::new;
+
+    @Override
+    public Supplier<APerson> instanceSupplier(){
+        return supplier;
     }
 
     @Override
-    public Either<Violation, APerson> fromJsonStr(String reqObj) {
-        return null;
+    public Map<String, SchemaField> fieldMap(){
+        return fieldMap;
     }
 
     @Override
-    public JsonObject toJsonObj(APerson bean) {
-        JsonObject js = new JsonObject();
-        js.put(gender, gender.toJsonVal(bean));
-        js.put(address_list, address_list.toJsonVal(bean));
-        js.put(employer, employer.toJsonVal(bean));
-        js.put(id, id.toJsonVal(bean));
-        js.put(age.name, age.toJsonVal(bean));
-        return js;
-    }
-
-
-    @Override
-    public String toJsonStr(APerson dataBean$) {
-        return "";
-    }
-
-    @Override
-    public DataDiff<APerson> diff(APerson left, APerson right) {
-        APerson merged = new APerson();
-        JsonObject delta = new JsonObject();
-
-        merged.gender = gender.diff(left, right, delta::put);
-        merged.addressList = address_list.diff(left, right, delta::put);
-        merged.employer = employer.diff(left, right, delta::put);
-        merged.id = id.diff(left, right, delta::put);
-        merged.age = age.diff(left, right, delta::put);
-
-        return new DataDiff<>(delta, merged);
-    }
-
-     /* @Override
     public Either<Violation, APerson> fromJsonObj(JsonObject data) {
 
         Either<Violation, Gender> genderEither = gender.fromJson(data);
@@ -94,7 +51,7 @@ public class $APerson extends BeanSchema<APerson> {
         Either<Violation, Long> idEither = id.fromJson(data);
         Either<Violation, Integer> ageEither = age.fromJson(data);
 
-        ObjViolation violation = newViolation(APerson.class);
+        ObjViolation violation = new ObjViolation("SCHEMA::"+APerson.class.getSimpleName());
         violation.check(gender, genderEither);
         violation.check(address_list, addressListEither);
         violation.check(employer, employerEither);
@@ -111,6 +68,35 @@ public class $APerson extends BeanSchema<APerson> {
         bean.id = idEither.right();
         bean.setAge(ageEither.right());
         return Either.right(bean);
-    }*/
+    }
+
+
+    @Override
+    public JsonObject toJsonObj(APerson bean) {
+        JsonObject js = new JsonObject();
+        js.put(gender, gender.toJson(bean));
+        js.put(address_list, address_list.toJson(bean));
+        js.put(employer, employer.toJson(bean));
+        js.put(id, id.toJson(bean));
+        js.put(age.name, age.toJson(bean));
+        return js;
+    }
+
+
+    @Override
+    public DataDiff<APerson> diff(APerson left, APerson right) {
+        APerson merged = new APerson();
+        JsonObject delta = new JsonObject();
+
+        merged.gender = gender.diff(left, right, delta::put);
+        merged.addressList = address_list.diff(left, right, delta::put);
+        merged.employer = employer.diff(left, right, delta::put);
+        merged.id = id.diff(left, right, delta::put);
+        merged.age = age.diff(left, right, delta::put);
+
+        return new DataDiff<>(delta, merged);
+    }
+
+
 
 }

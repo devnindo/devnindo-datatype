@@ -15,6 +15,9 @@
  */
 package io.devnindo.datatype.schema;
 
+import com.fasterxml.jackson.core.JsonParser;
+import com.fasterxml.jackson.core.JsonToken;
+import io.devnindo.datatype.json.DefaultCodec;
 import io.devnindo.datatype.json.JsonObject;
 import io.devnindo.datatype.schema.typeresolver.TypeResolverFactory;
 import io.devnindo.datatype.schema.typeresolver.TypeResolver;
@@ -25,6 +28,7 @@ import io.devnindo.datatype.validation.Violation;
 
 import javax.annotation.processing.Generated;
 import javax.xml.crypto.Data;
+import javax.xml.validation.Schema;
 import java.io.*;
 import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
@@ -32,6 +36,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.function.BiConsumer;
 import java.util.function.Function;
+import java.util.function.Supplier;
 
 public abstract class BeanSchema<T extends DataBean> {
 
@@ -80,10 +85,6 @@ public abstract class BeanSchema<T extends DataBean> {
         return SCHEMA_MAP.get(clzName);
     }
 
-    protected static final void regField(String dataClzName,  SchemaField field){
-        FIELD_MAP.put(dataClzName+"."+field.name, field);
-    }
-
     protected static final SchemaField getField(String dataClzName, String name){
         return FIELD_MAP.get(dataClzName+"."+name);
     }
@@ -111,47 +112,56 @@ public abstract class BeanSchema<T extends DataBean> {
         return schema;
     }
 
-    protected static final <D extends DataBean, VAL> SchemaField<D, VAL>
-    plainField(String name$, Function<D, VAL> getter$, BiConsumer<D, VAL> setter$, Class<VAL> typeClz$, boolean required$) {
-        TypeResolver resolverIF = TypeResolverFactory.plain(typeClz$);
-        return new SchemaField<>(name$, getter$, setter$, resolverIF, required$);
-    }
 
-    protected static final <D extends DataBean, VAL> SchemaField<D, List<VAL>>
-    plainListField(String name$, Function<D, List<VAL>> getter$, BiConsumer<D, List<VAL>> setter$, Class<VAL> typeClz$, boolean required$) {
-        TypeResolver resolverIF = TypeResolverFactory.plainDataList(typeClz$);
-        return new SchemaField<>(name$, getter$, setter$, resolverIF, required$);
-    }
 
-    protected static final <D extends DataBean, VAL extends DataBean> SchemaField<D, VAL>
-    beanField(String name, Function<D, VAL> getter, BiConsumer<D, VAL> setter, Class<VAL> typeClz, boolean required) {
-        TypeResolver resolverIF = TypeResolverFactory.beanType(typeClz);
-        return new SchemaField<>(name, getter, setter, resolverIF, required);
-    }
-
-    protected static final <D extends DataBean, VAL extends DataBean> SchemaField<D, List<VAL>>
-    beanListField(String name$, Function<D, List<VAL>> getter$, BiConsumer<D, List<VAL>> setter$, Class<VAL> typeClz$, boolean required$) {
-        TypeResolver resolverIF = TypeResolverFactory.beanList(typeClz$);
-        return new SchemaField<>(name$, getter$, setter$, resolverIF, required$);
-    }
-
-    protected static final <D extends DataBean, VAL extends Enum<VAL>> SchemaField<D, VAL>
-    enumField(String name$, Function<D, VAL> getter, BiConsumer<D, VAL> setter, Class<VAL> enumType$, boolean required$) {
-        TypeResolver resolverIF = TypeResolverFactory.enumType(enumType$);
-        return new SchemaField<>(name$, getter, setter, resolverIF, required$);
-    }
-
+    public abstract Map<String, SchemaField> fieldMap();
+    public abstract Supplier<T> newBean();
 
     public abstract JsonObject toJsonObj(T dataBean$);
 
     public abstract String toJsonStr(T dataBean$);
 
 
+
     // kept for backward compatibility
     public abstract Either<Violation, T> fromJsonObj(JsonObject js);
 
     //json to object
-    public abstract Either<Violation, T> fromJsonStr(String reqObj);
+    public Either<Violation, T> fromJsonStr(String reqObj){
+
+        JsonParser parser = DefaultCodec.createParser(reqObj);
+        T bean = newBean().get();
+        Map<String, SchemaField> fmap = fieldMap();
+
+        try{
+            if (parser.nextToken() != JsonToken.START_OBJECT) {
+                return Either.left(Violation.withCtx("VALID_JSON", "INVALID_JSON_STRING"));
+            }
+
+            while (parser.nextToken() != JsonToken.END_OBJECT) {
+                // The current token should be the field name (key)
+                if (parser.currentToken() == JsonToken.FIELD_NAME) {
+                    String fieldName = parser.getCurrentName();
+                    // Move to the next token, which is the value
+                    Object val = parser.nextToken();
+
+                }
+            }
+
+
+        } catch(IOException excp){
+            return Either.left(Violation.of("VALID_JSON").withCtx("PARSE_ERROR", excp.getMessage()));
+        }
+
+        return Either.right(bean);
+    }
+
+    void  fromJsonObj(JsonParser parser, T t, String fieldName, Object fieldVal){
+        SchemaField f = fieldMap().get(fieldName);
+        // if field value is object type
+        // find schema:
+
+    }
 
 
 
