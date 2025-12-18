@@ -15,29 +15,14 @@
  */
 package io.devnindo.datatype.schema;
 
-import com.fasterxml.jackson.core.JsonParser;
-import com.fasterxml.jackson.core.JsonToken;
-import io.devnindo.datatype.json.BeanCodec;
-import io.devnindo.datatype.json.DefaultCodec;
 import io.devnindo.datatype.json.JsonObject;
-import io.devnindo.datatype.schema.typeresolver.TypeResolverFactory;
-import io.devnindo.datatype.schema.typeresolver.TypeResolver;
-import io.devnindo.datatype.util.ClzUtil;
 import io.devnindo.datatype.util.Either;
-import io.devnindo.datatype.validation.ObjViolation;
 import io.devnindo.datatype.validation.Violation;
 
-import javax.annotation.processing.Generated;
-import javax.xml.crypto.Data;
-import javax.xml.validation.Schema;
 import java.io.*;
 import java.nio.charset.StandardCharsets;
-import java.util.HashMap;
 import java.util.IdentityHashMap;
-import java.util.List;
 import java.util.Map;
-import java.util.function.BiConsumer;
-import java.util.function.Function;
 import java.util.function.Supplier;
 
 public abstract class BeanSchema<T extends DataBean> {

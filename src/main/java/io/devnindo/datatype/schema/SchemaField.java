@@ -15,49 +15,64 @@
  */
 package io.devnindo.datatype.schema;
 
+import io.devnindo.datatype.json.JsonArray;
 import io.devnindo.datatype.json.JsonObject;
+import io.devnindo.datatype.schema.typeresolver.ResolverFactory;
 import io.devnindo.datatype.schema.typeresolver.TypeResolver;
-import io.devnindo.datatype.schema.typeresolver.TypeResolverFactory;
 import io.devnindo.datatype.util.Either;
 import io.devnindo.datatype.validation.Violation;
 import io.devnindo.datatype.validation.violations.LogicalViolations;
+import io.devnindo.datatype.validation.violations.TypeViolations;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.function.BiConsumer;
-import java.util.function.Consumer;
 import java.util.function.Function;
 
-public abstract class SchemaField<D extends DataBean, VAL> {
+public  abstract class SchemaField<D extends DataBean, VAL> {
     public final String name;
     public final Function<D, VAL> accessor;
     public final BiConsumer<D, VAL> setter;
     public final boolean required;
-    public final Class type;
+    public final Class<VAL> dataType;
     public final boolean isList;
-
-
-
+    public final TypeResolver<VAL> resolver;
 
     SchemaField(String name, boolean required,  Class type, boolean isList, Function<D, VAL> accessor, BiConsumer<D, VAL> setter) {
         this.name = name;
         this.required = required;
-        this.type = type;
+        this.dataType = type;
         this.isList = isList;
         this.accessor = accessor;
         this.setter = setter;
+        resolver = ResolverFactory.resolver(dataType);
 
     }
 
     public boolean isBean(){
-        return (DataBean.class.isAssignableFrom(type));
+        return (DataBean.class.isAssignableFrom(dataType)) ;
     }
 
+    public   Either<Violation, VAL> fromJson(JsonObject jsObj){
 
-    public Either<Violation, VAL> resolve(Object val){
-        throw new UnsupportedOperationException();
+        Object val = jsObj.getValue(name);
+        if (val == null){
+            if (required) return Either.left(LogicalViolations.notNull());
+            return Either.right(null);
+        }
+        return evalJsonVal(val);
     }
 
+    abstract Either<Violation, VAL> evalJsonVal(Object val);
 
+    public Object toJson(D dataBean) {
+        VAL val = accessor.apply(dataBean);
+        if (val == null)
+            return null;
+        return toJsonVal(val);
+    }
+
+    abstract Object toJsonVal(VAL val);
     /*public Either<Violation, VAL> fromJson(JsonObject jsObj) {
         Object val = jsObj.getValue(name);
         if (val != null)

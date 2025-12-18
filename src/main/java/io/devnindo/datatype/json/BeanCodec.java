@@ -5,7 +5,6 @@ import com.fasterxml.jackson.core.JsonToken;
 import io.devnindo.datatype.schema.BeanSchema;
 import io.devnindo.datatype.schema.DataBean;
 import io.devnindo.datatype.schema.SchemaField;
-import io.devnindo.datatype.schema.typeresolver.TypeResolverFactory;
 import io.devnindo.datatype.util.Either;
 import io.devnindo.datatype.validation.ObjViolation;
 import io.devnindo.datatype.validation.Violation;
@@ -39,14 +38,14 @@ public class BeanCodec {
                     String fieldName = parser.getCurrentName();
                     SchemaField field = fmap.get(fieldName);
                     if (field.isBean()) {
-                        Either<Violation, Object>  valEither = parseBean(parser, field.type);
+                        Either<Violation, Object>  valEither = parseBean(parser, field.dataType);
                         if (valEither.isLeft())
                         { // first-fail on violation
                             violation.check(field, valEither);
                             return Either.left(violation);
                         }
                         field.setter.accept(owner, valEither.right());
-                    } else if (field.isBean() && field.isList){
+                    } else if (field.isBeanList()){
 
                     }
                 }
