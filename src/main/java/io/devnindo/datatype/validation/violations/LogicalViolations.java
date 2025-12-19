@@ -39,40 +39,15 @@ public final class LogicalViolations {
         return Violation.withCtx("MAX_BOUND", t$);
     }
 
-    public static <T extends Comparable<T>> Violation lessThanBound(T t$) {
-        return Violation.withCtx("LESS_THAN_BOUND", t$);
-    }
 
     public static <T extends Comparable<T>> Violation minBound(T t$) {
         return Violation.withCtx("MIN_BOUND", t$);
 
     }
 
-    public static <T extends Comparable<T>> Violation greaterThanBound(T t$) {
-        return Violation.withCtx("GREATER_THAN_BOUND", t$);
-
-    }
-
-    public static <T extends Comparable<T>> Violation openRangeBound(T left$, T right$) {
-        JsonObject ctxData = new JsonObject().put("cardinal_left", left$).put("cardinal_right", right$);
-        return Violation.withCtx("RANGE_OPEN", ctxData);
-
-    }
-
-    public static <T extends Comparable<T>> Violation openCloseRangeBound(T t, T left$, T right$) {
-        JsonObject ctxData = new JsonObject().put("cardinal_left", left$).put("cardinal_right", right$);
+    public static <T extends Comparable<T>> Violation rangeBound(T min$, T max$) {
+        JsonObject ctxData = new JsonObject().put("min", min$).put("max", max$);
         return Violation.withCtx("RANGE_OPEN_CLOSE", ctxData);
-
-    }
-
-    public static <T extends Comparable<T>> Violation closeOpenRangeBound(T t, T left$, T right$) {
-        JsonObject ctxData = new JsonObject().put("cardinal_left", left$).put("cardinal_right", right$);
-        return Violation.withCtx("RANGE_CLOSE_OPEN", ctxData);
-    }
-
-    public static <T extends Comparable<T>> Violation closeRangeBound(T t, T left$, T right$) {
-        JsonObject ctxData = new JsonObject().put("cardinal_left", left$).put("cardinal_right", right$);
-        return Violation.withCtx("RANGE_CLOSE", ctxData);
 
     }
 

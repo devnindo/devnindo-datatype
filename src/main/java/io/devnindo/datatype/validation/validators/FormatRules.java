@@ -24,7 +24,7 @@ import java.util.regex.Pattern;
 public class FormatRules {
     private static final Pattern emailPattern = Pattern.compile("^\\w+([-+.']\\w+)*@\\w+([-.]\\w+)*\\.\\w+([-.]\\w+)*$");
 
-    public static final <T> Validator<T, String> asEmail() {
+    public static final <T> Validator<String> asEmail() {
         return (t) -> {
 
             if (t instanceof String) {

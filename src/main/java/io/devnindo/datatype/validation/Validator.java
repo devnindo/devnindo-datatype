@@ -18,30 +18,31 @@ package io.devnindo.datatype.validation;
 
 import io.devnindo.datatype.util.Either;
 
-public interface Validator<T, R> {
+public interface Validator<R> {
 
-    public Either<Violation, R> apply(T value);
+    public Either<Violation, Void> apply(R value);
 
 
-    public default <U> Validator<T, U> compose(Validator<? super R, U> after) {
+    public default Validator<R> compose(Validator<R> after) {
         return (t) ->
         {
-            Either<Violation, R> retEither = this.apply(t);
+            Either<Violation, Void> retEither = this.apply(t);
             if (retEither.isLeft())
                 return Either.left(retEither.left());
-            else return after.apply(retEither.right());
+            else
+                return after.apply(t);
 
         };
     }
 
-    public default Validator<T, R> or(Validator<T, R> after) {
+    public default Validator<R> or(Validator<R> after) {
         return (t) ->
         {
-            Either<Violation, R> retEither = this.apply(t);
-            if (retEither.isRight())
-                return retEither;
-            else return after.apply(t);
+            Either<Violation, Void> retEither = this.apply(t);
+            if (retEither.isLeft())
+                retEither = after.apply(t);
 
+            return retEither;
         };
     }
 
