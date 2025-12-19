@@ -20,6 +20,7 @@ import io.devnindo.datatype.schema.DataBean;
 import io.devnindo.datatype.schema.typeresolver.ResolverFactory;
 import io.devnindo.datatype.schema.typeresolver.TypeResolverIF;
 import io.devnindo.datatype.util.Either;
+import io.devnindo.datatype.validation.Validator;
 import io.devnindo.datatype.validation.Violation;
 import io.devnindo.datatype.validation.violations.LogicalViolations;
 import jdk.jfr.Description;
@@ -34,7 +35,8 @@ public  abstract class SchemaField<D extends DataBean, VAL> {
     public final boolean required;
     public final Class dataType;
     public final boolean isList;
-    public final TypeResolverIF resolver;
+
+    public final Validator<VAL, VAL> validator;
 
     protected SchemaField(String name, boolean required,  Class type, boolean isList, Function<D, VAL> accessor, BiConsumer<D, VAL> setter) {
         this.name = name;
@@ -43,8 +45,6 @@ public  abstract class SchemaField<D extends DataBean, VAL> {
         this.isList = isList;
         this.accessor = accessor;
         this.setter = setter;
-        // ResolverFactory doesn't have mapping for {DataBean, Enum}
-        resolver = ResolverFactory.resolver(dataType);
 
     }
 
@@ -52,6 +52,7 @@ public  abstract class SchemaField<D extends DataBean, VAL> {
         return (DataBean.class.isAssignableFrom(dataType)) ;
     }
 
+    @Deprecated
     public   Either<Violation, VAL> fromJson(JsonObject jsObj){
 
         Object val = jsObj.getValue(name);
@@ -59,10 +60,26 @@ public  abstract class SchemaField<D extends DataBean, VAL> {
             if (required) return Either.left(LogicalViolations.notNull());
             return Either.right(null);
         }
-        return evalJsonVal(val);
+        return resolveVal(val);
     }
 
-    public abstract Either<Violation, VAL> evalJsonVal(Object val);
+    public  Either<Violation, VAL> evalVal(Object val){
+        // type resolve
+        Either<Violation, VAL> valEither = resolveVal(val);
+        if(valEither.isRight())
+        {
+            //todo: validation check implementaiton
+           throw new UnsupportedOperationException("Validation Check");
+        }
+
+        return  valEither;
+
+    }
+
+
+     abstract Either<Violation, VAL> resolveVal(Object val);
+
+
 
     public Object toJson(D dataBean) {
         VAL val = accessor.apply(dataBean);

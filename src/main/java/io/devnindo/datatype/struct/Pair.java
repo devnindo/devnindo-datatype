@@ -13,25 +13,20 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.devnindo.datatype.tuples;
+package io.devnindo.datatype.struct;
 
-public final class Tuple3<V1, V2, V3> {
+public final class Pair<V1, V2> {
     public final V1 first;
     public final V2 second;
-    public final V3 third;
 
-    private Tuple3(V1 first$, V2 second$, V3 third$) {
+    private Pair(V1 first$, V2 second$) {
         first = first$;
         second = second$;
-        third = third$;
     }
 
-    public static final <V1, V2, V3> Tuple3<V1, V2, V3> of(V1 first$, V2 second$, V3 third$) {
-        return new Tuple3<>(first$, second$, third$);
+    public static final <V1, V2> Pair<V1, V2> of(V1 first$, V2 second$) {
+        return new Pair<>(first$, second$);
     }
 
-    public static final <V1, V2, V3> Tuple3<V1, V2, V3> of(Pair<V1, V2> pair$, V3 third$) {
-        return new Tuple3<>(pair$.first, pair$.second, third$);
-    }
 }
 

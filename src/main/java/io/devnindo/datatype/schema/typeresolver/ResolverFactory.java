@@ -38,7 +38,7 @@ public final class ResolverFactory {
     };
     private ResolverFactory(){}
 
-    public static final TypeResolverIF resolver(Class type){
+    public static final TypeResolverIF get(Class type){
         return resolverMap.get(type);
     }
 

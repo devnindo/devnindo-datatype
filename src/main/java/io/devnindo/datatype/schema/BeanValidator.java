@@ -25,6 +25,7 @@ import io.devnindo.datatype.validation.Violation;
 import io.devnindo.datatype.validation.violations.LogicalViolations;
 
 import java.util.HashMap;
+import java.util.IdentityHashMap;
 import java.util.Map;
 import java.util.function.Consumer;
 
@@ -39,7 +40,7 @@ public final class BeanValidator<D extends DataBean>
     protected BeanValidator(String constraintName$, Class<D> beanClz$) {
         constraintName = constraintName$;
         beanClz = beanClz$;
-        condition = new HashMap<>();
+        condition = new IdentityHashMap<>();
 
     }
 

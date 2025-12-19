@@ -3,11 +3,10 @@ package io.devnindo.datatype.schematest;
 import io.devnindo.datatype.json.JsonObject;
 import io.devnindo.datatype.schema.*;
 import io.devnindo.datatype.schema.field.SchemaField;
+import io.devnindo.datatype.struct.StringIdMap;
 import io.devnindo.datatype.util.Either;
 import io.devnindo.datatype.validation.ObjViolation;
 import io.devnindo.datatype.validation.Violation;
-
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.function.Supplier;
@@ -21,7 +20,7 @@ public class $APerson extends BeanSchema<APerson> {
     public static final SchemaField<APerson, Long> id = plainField("id", APerson::getId, APerson::setId, Long.class, true);
     public static final SchemaField<APerson, Integer> age = plainField("age", APerson::getAge, APerson::setAge, Integer.class, true);
 
-    private static final Map<String, SchemaField> fieldMap = new HashMap<>(6){{
+    private static final Map<String, SchemaField> fieldMap = new StringIdMap<>(6){{
             put(gender.name, gender);
             put(primary_address.name, primary_address);
             put(address_list.name, address_list);
@@ -34,8 +33,13 @@ public class $APerson extends BeanSchema<APerson> {
     private static final Supplier<APerson> supplier = APerson::new;
 
     @Override
-    public Supplier<APerson> instanceSupplier(){
-        return supplier;
+    public Supplier<APerson> newBean() {
+        return null;
+    }
+
+    @Override
+    public String toJsonStr(APerson dataBean$) {
+        return "";
     }
 
     @Override
@@ -70,6 +74,7 @@ public class $APerson extends BeanSchema<APerson> {
         bean.setAge(ageEither.right());
         return Either.right(bean);
     }
+
 
 
     @Override

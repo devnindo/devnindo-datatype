@@ -17,7 +17,7 @@ public class EnumField <D extends DataBean, VAL extends Enum<VAL>> extends Schem
     }
 
     @Override
-    public Either<Violation, VAL> evalJsonVal(Object val) {
+    public Either<Violation, VAL> resolveVal(Object val) {
         if (val instanceof String == false) // null safe operation
             return Either.left(enumViolation);
         try {

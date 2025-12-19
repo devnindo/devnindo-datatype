@@ -17,7 +17,7 @@ public class BeanField<D extends DataBean, VAL extends DataBean> extends SchemaF
     }
 
     @Override
-    Either<Violation, VAL> evalJsonVal(Object val) {
+    Either<Violation, VAL> resolveVal(Object val) {
         if (val instanceof JsonObject == false)
             return Either.left(beanViolation);
         JsonObject obj = (JsonObject) val;

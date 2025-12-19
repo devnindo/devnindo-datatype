@@ -3,7 +3,6 @@ package io.devnindo.datatype.schema;
 import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.core.JsonToken;
 import io.devnindo.datatype.json.JsonBag;
-import io.devnindo.datatype.schema.field.ListField;
 import io.devnindo.datatype.schema.field.SchemaField;
 import io.devnindo.datatype.schema.typeresolver.ResolverFactory;
 import io.devnindo.datatype.util.Either;
@@ -63,7 +62,7 @@ public class BeanCodec {
         } else if (field.isBean()){
             return parseBean(parser, field.dataType);
         } else {
-            return field.evalJsonVal(parser.getCurrentValue());
+            return field.evalVal(parser.getCurrentValue());
         }
 
     }
@@ -84,7 +83,7 @@ public class BeanCodec {
                 if (type.isAssignableFrom(DataBean.class)) { // handle list of bean
                      valEither = parseBean(parser, type);
                 } else { // handle other plain type
-                    valEither = ResolverFactory.resolver(type).evalJsonVal(parser.currentValue());
+                    valEither = ResolverFactory.get(type).evalJsonVal(parser.currentValue());
                 }
                 if (valEither.isLeft()){
                     return valEither;

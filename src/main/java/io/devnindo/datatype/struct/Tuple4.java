@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.devnindo.datatype.tuples;
+package io.devnindo.datatype.struct;
 
 public final class Tuple4<V1, V2, V3, V4> {
     public final V1 first;
