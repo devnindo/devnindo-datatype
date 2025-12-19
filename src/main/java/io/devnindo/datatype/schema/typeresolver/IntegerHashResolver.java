@@ -20,7 +20,7 @@ import io.devnindo.datatype.validation.Violation;
 
 import java.util.function.Consumer;
 
-public class IntegerHashResolver implements TypeResolver<Integer> {
+public class IntegerHashResolver implements TypeResolverIF<Integer> {
 
     @Override
     public Either<Violation, Integer> evalJsonVal(Object val) {

@@ -23,7 +23,7 @@ import java.util.function.Consumer;
 /**
  *
  * */
-public interface TypeResolver<T> {
+public interface TypeResolverIF<T> {
     public Either<Violation, T> evalJsonVal(Object val);
 
     public Object toJsonVal(T t);

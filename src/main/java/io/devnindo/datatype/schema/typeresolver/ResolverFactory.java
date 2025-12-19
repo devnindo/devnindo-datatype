@@ -24,7 +24,7 @@ import java.util.Map;
 
 public final class ResolverFactory {
 
-    private static final Map<Class, TypeResolver> resolverMap = new IdentityHashMap<>(6){
+    private static final Map<Class, TypeResolverIF> resolverMap = new IdentityHashMap<>(6){
         {
             put(Integer.class, new IntegerResolver());
             put(Long.class, new LongResolver());
@@ -38,7 +38,7 @@ public final class ResolverFactory {
     };
     private ResolverFactory(){}
 
-    public static final TypeResolver resolver(Class type){
+    public static final TypeResolverIF resolver(Class type){
         return resolverMap.get(type);
     }
 

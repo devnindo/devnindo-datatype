@@ -17,7 +17,7 @@ package io.devnindo.datatype.schema.typeresolver;
 
 import java.util.function.Consumer;
 
-public interface SimpleTypeResolverIF<T> extends TypeResolver<T> {
+public interface SimpleTypeResolverIF<T> extends TypeResolverIF<T> {
 
     @Override
     default Object toJsonVal(T t) {

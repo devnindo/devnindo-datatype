@@ -18,7 +18,7 @@ package io.devnindo.datatype.schema.field;
 import io.devnindo.datatype.json.JsonObject;
 import io.devnindo.datatype.schema.DataBean;
 import io.devnindo.datatype.schema.typeresolver.ResolverFactory;
-import io.devnindo.datatype.schema.typeresolver.TypeResolver;
+import io.devnindo.datatype.schema.typeresolver.TypeResolverIF;
 import io.devnindo.datatype.util.Either;
 import io.devnindo.datatype.validation.Violation;
 import io.devnindo.datatype.validation.violations.LogicalViolations;
@@ -34,7 +34,7 @@ public  abstract class SchemaField<D extends DataBean, VAL> {
     public final boolean required;
     public final Class dataType;
     public final boolean isList;
-    public final TypeResolver resolver;
+    public final TypeResolverIF resolver;
 
     protected SchemaField(String name, boolean required,  Class type, boolean isList, Function<D, VAL> accessor, BiConsumer<D, VAL> setter) {
         this.name = name;
@@ -43,6 +43,7 @@ public  abstract class SchemaField<D extends DataBean, VAL> {
         this.isList = isList;
         this.accessor = accessor;
         this.setter = setter;
+        // ResolverFactory doesn't have mapping for {DataBean, Enum}
         resolver = ResolverFactory.resolver(dataType);
 
     }
@@ -61,7 +62,7 @@ public  abstract class SchemaField<D extends DataBean, VAL> {
         return evalJsonVal(val);
     }
 
-    abstract Either<Violation, VAL> evalJsonVal(Object val);
+    public abstract Either<Violation, VAL> evalJsonVal(Object val);
 
     public Object toJson(D dataBean) {
         VAL val = accessor.apply(dataBean);

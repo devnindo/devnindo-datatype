@@ -24,7 +24,7 @@ import io.devnindo.datatype.validation.violations.TypeViolations;
 
 import java.util.function.Consumer;
 
-public class JsonObjectResolver implements TypeResolver<JsonObject> {
+public class JsonObjectResolver implements TypeResolverIF<JsonObject> {
 
     @Override
     public Either<Violation, JsonObject> evalJsonVal(Object val) {

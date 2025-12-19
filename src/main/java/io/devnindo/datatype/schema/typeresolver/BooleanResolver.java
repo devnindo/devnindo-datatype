@@ -22,10 +22,12 @@ import io.devnindo.datatype.validation.violations.TypeViolations;
 public class BooleanResolver implements SimpleTypeResolverIF<Boolean> {
     @Override
     public Either<Violation, Boolean> evalJsonVal(Object val) {
-        if (val instanceof Boolean == false)
-            Either.left(TypeViolations.BOOLEAN_TYPE);
-
-        return Either.right((Boolean) val);
+        if (val instanceof Boolean)
+            return Either.right((Boolean) val);
+        if (val instanceof String) {
+            Either.right("true".equals(val) || "false".equals(val));
+        }
+        return Either.left(TypeViolations.BOOLEAN_TYPE);
     }
 
 }
