@@ -2,6 +2,7 @@ package io.devnindo.datatype.schematest;
 
 import io.devnindo.datatype.json.JsonObject;
 import io.devnindo.datatype.schema.*;
+import io.devnindo.datatype.schema.field.SchemaField;
 import io.devnindo.datatype.util.Either;
 import io.devnindo.datatype.validation.ObjViolation;
 import io.devnindo.datatype.validation.Violation;

@@ -4,7 +4,7 @@ import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.core.JsonToken;
 import io.devnindo.datatype.schema.BeanSchema;
 import io.devnindo.datatype.schema.DataBean;
-import io.devnindo.datatype.schema.SchemaField;
+import io.devnindo.datatype.schema.field.SchemaField;
 import io.devnindo.datatype.util.Either;
 import io.devnindo.datatype.validation.ObjViolation;
 import io.devnindo.datatype.validation.Violation;

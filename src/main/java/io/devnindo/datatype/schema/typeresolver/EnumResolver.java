@@ -13,14 +13,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.devnindo.datatype.schema.typeresolver.literals;
+package io.devnindo.datatype.schema.typeresolver;
 
-import io.devnindo.datatype.schema.typeresolver.SimpleTypeResolverIF;
 import io.devnindo.datatype.util.Either;
 import io.devnindo.datatype.validation.Violation;
 import io.devnindo.datatype.validation.violations.TypeViolations;
 
-
+@Deprecated
 public class EnumResolver<T extends Enum<T>> implements SimpleTypeResolverIF<T> {
 
     public final Class<T> enumType;

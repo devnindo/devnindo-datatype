@@ -25,6 +25,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Consumer;
 
+@Deprecated
 public class PlainListResolver<T> implements TypeResolver<List<T>> {
     private final Violation listTypeViolation;
     // Integer, String, Double, JsonObject

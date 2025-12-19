@@ -13,29 +13,21 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.devnindo.datatype.schema.typeresolver.literals;
+package io.devnindo.datatype.schema.typeresolver;
 
-import io.devnindo.datatype.schema.typeresolver.TypeResolver;
 import io.devnindo.datatype.util.Either;
 import io.devnindo.datatype.validation.Violation;
+import io.devnindo.datatype.validation.violations.TypeViolations;
 
-import java.util.function.Consumer;
-
-public class IntegerHashResolver implements TypeResolver<Integer> {
-
+public class DoubleResolver implements SimpleTypeResolverIF<Double> {
     @Override
-    public Either<Violation, Integer> evalJsonVal(Object val) {
-        throw new UnsupportedOperationException();
-    }
+    public Either<Violation, Double> evalJsonVal(Object val) {
+        if (val instanceof Number == false)
+            return Either.left(TypeViolations.DOUBLE_TYPE);
 
-    @Override
-    public Object toJsonVal(Integer integer) {
-        throw new UnsupportedOperationException();
-    }
+        Double dVal = ((Number) val).doubleValue();
+        return Either.right(dVal);
 
-    @Override
-    public Integer diff(Integer from, Integer to, Consumer changeConsumer) {
-        return null;
     }
 }
 

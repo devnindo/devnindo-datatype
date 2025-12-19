@@ -13,19 +13,20 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.devnindo.datatype.schema.typeresolver.literals;
+package io.devnindo.datatype.schema.typeresolver;
 
-import io.devnindo.datatype.schema.typeresolver.SimpleTypeResolverIF;
 import io.devnindo.datatype.util.Either;
 import io.devnindo.datatype.validation.Violation;
 import io.devnindo.datatype.validation.violations.TypeViolations;
 
-public class StringResolver implements SimpleTypeResolverIF<String> {
+public class IntegerResolver implements SimpleTypeResolverIF<Integer> {
+
     @Override
-    public Either<Violation, String> evalJsonVal(Object val) {
-        if (val instanceof String == false)
-            return Either.left(TypeViolations.STRING_TYPE);
-        return Either.right((String) val);
+    public Either<Violation, Integer> evalJsonVal(Object val) {
+        if (val instanceof Integer == false)
+            return Either.left(TypeViolations.INTEGER_TYPE);
+
+        return Either.right((Integer) val);
     }
 }
 

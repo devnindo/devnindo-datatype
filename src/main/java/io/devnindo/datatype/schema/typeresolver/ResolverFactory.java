@@ -15,10 +15,9 @@
  */
 package io.devnindo.datatype.schema.typeresolver;
 
-import io.devnindo.datatype.schema.typeresolver.lists.PlainListResolver;
-import io.devnindo.datatype.schema.typeresolver.literals.*;
+import io.devnindo.datatype.json.JsonArray;
+import io.devnindo.datatype.json.JsonObject;
 
-import java.time.Instant;
 import java.util.IdentityHashMap;
 import java.util.Map;
 
@@ -33,6 +32,8 @@ public final class ResolverFactory {
             put(StringResolver.class, new StringResolver());
             put(BooleanResolver.class, new BooleanResolver());
             put(InstantResolver.class, new IntegerResolver());
+            put(JsonObject.class, new JsonObjectResolver());
+            put(JsonArray.class, new JsonArrayResolver());
         }
     };
     private ResolverFactory(){}

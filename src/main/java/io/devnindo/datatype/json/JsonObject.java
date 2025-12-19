@@ -26,7 +26,7 @@ package io.devnindo.datatype.json;
 
 import io.devnindo.datatype.schema.BeanSchema;
 import io.devnindo.datatype.schema.DataBean;
-import io.devnindo.datatype.schema.SchemaField;
+import io.devnindo.datatype.schema.field.SchemaField;
 import io.devnindo.datatype.util.Either;
 import io.devnindo.datatype.util.JsonUtil;
 import io.devnindo.datatype.validation.Violation;

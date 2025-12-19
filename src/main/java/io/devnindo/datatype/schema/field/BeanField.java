@@ -1,11 +1,11 @@
-package io.devnindo.datatype.schema;
+package io.devnindo.datatype.schema.field;
 
 import io.devnindo.datatype.json.JsonObject;
+import io.devnindo.datatype.schema.DataBean;
 import io.devnindo.datatype.util.Either;
 import io.devnindo.datatype.validation.Violation;
 import io.devnindo.datatype.validation.violations.TypeViolations;
 
-import javax.xml.validation.Schema;
 import java.util.function.BiConsumer;
 import java.util.function.Function;
 

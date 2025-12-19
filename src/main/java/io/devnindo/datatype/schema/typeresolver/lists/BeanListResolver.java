@@ -27,6 +27,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Consumer;
 
+@Deprecated
 public class BeanListResolver<T extends DataBean> implements TypeResolver<List<T>> {
     private final Violation listJsonObjViolation;
     // Integer, String, Double, JsonObject

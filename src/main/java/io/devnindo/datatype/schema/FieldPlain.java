@@ -1,12 +1,12 @@
 package io.devnindo.datatype.schema;
 
-import io.devnindo.datatype.schema.typeresolver.Resolver;
+import io.devnindo.datatype.schema.field.SchemaField;
 import io.devnindo.datatype.schema.typeresolver.TypeResolver;
 
 import java.util.function.BiConsumer;
 import java.util.function.Function;
 
-public class FieldPlain<D extends DataBean, VAL> extends SchemaField<D, VAL>{
+public class FieldPlain<D extends DataBean, VAL> extends SchemaField<D, VAL> {
 
     public final TypeResolver<VAL> typeResolver;
 

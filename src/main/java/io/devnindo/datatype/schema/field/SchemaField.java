@@ -13,20 +13,17 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.devnindo.datatype.schema;
+package io.devnindo.datatype.schema.field;
 
-import io.devnindo.datatype.json.JsonArray;
 import io.devnindo.datatype.json.JsonObject;
+import io.devnindo.datatype.schema.DataBean;
 import io.devnindo.datatype.schema.typeresolver.ResolverFactory;
 import io.devnindo.datatype.schema.typeresolver.TypeResolver;
 import io.devnindo.datatype.util.Either;
 import io.devnindo.datatype.validation.Violation;
 import io.devnindo.datatype.validation.violations.LogicalViolations;
-import io.devnindo.datatype.validation.violations.TypeViolations;
 import jdk.jfr.Description;
 
-import java.util.ArrayList;
-import java.util.List;
 import java.util.function.BiConsumer;
 import java.util.function.Function;
 
@@ -39,7 +36,7 @@ public  abstract class SchemaField<D extends DataBean, VAL> {
     public final boolean isList;
     public final TypeResolver resolver;
 
-    SchemaField(String name, boolean required,  Class type, boolean isList, Function<D, VAL> accessor, BiConsumer<D, VAL> setter) {
+    protected SchemaField(String name, boolean required,  Class type, boolean isList, Function<D, VAL> accessor, BiConsumer<D, VAL> setter) {
         this.name = name;
         this.required = required;
         this.dataType = type;
