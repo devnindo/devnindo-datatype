@@ -19,6 +19,7 @@ package io.devnindo.datatype.schema;
 import io.devnindo.datatype.json.JsonObject;
 import io.devnindo.datatype.schema.field.SchemaField;
 import io.devnindo.datatype.util.Either;
+import io.devnindo.datatype.validation.CommonValidators;
 import io.devnindo.datatype.validation.ObjViolation;
 import io.devnindo.datatype.validation.Validator;
 import io.devnindo.datatype.validation.Violation;
@@ -30,7 +31,7 @@ import java.util.Map;
 import java.util.function.Consumer;
 
 public final class BeanValidator<D extends DataBean>
-        implements Validator<D, D> {
+        implements Validator<D> {
 
 
     public final String constraintName;
@@ -53,7 +54,7 @@ public final class BeanValidator<D extends DataBean>
 
 
     @Override
-    public Either<Violation, D> apply(D beanObj$) {
+    public Either<Violation, Void> apply(D beanObj$) {
 
         ObjViolation violation = new ObjViolation(constraintName);
         condition.forEach((field, constraint) -> {
@@ -65,12 +66,12 @@ public final class BeanValidator<D extends DataBean>
 
         if (violation.hasRequirement())
             return Either.left(violation);
-        else return Either.right(beanObj$);
+        else return Either.right(null);
 
 
     }
 
-    public Either<Violation, D> apply(JsonObject dataObj$) {
+    public Either<Violation, Void> apply(JsonObject dataObj$) {
 
 
         Either<Violation, D> dataBeanEither = BeanSchema.of(beanClz).fromJsonObj(dataObj$);
@@ -97,12 +98,13 @@ public final class BeanValidator<D extends DataBean>
 
 
     public static class Constraint<T> {
-        final boolean required;
         private Validator validator;
 
         protected Constraint(boolean requred$) {
-            this.required = requred$;
-            validator = (v) -> Either.right(v);
+            if(requred$)
+                validator = CommonValidators.notNull;
+            else
+                validator = (v) -> Either.right(null);
         }
 
         public static final <T> Constraint<T> required() {
@@ -114,20 +116,15 @@ public final class BeanValidator<D extends DataBean>
         }
 
         public Either<Violation, T> apply(T val) {
-            if (val == null)
-                if (required)
-                    return Either.left(LogicalViolations.notNull());
-                else return Either.right(null);
-            else
-                return validator.apply(val);
+            return validator.apply(val);
         }
 
-        public Constraint<T> and(Validator<T, T> rule$) {
+        public Constraint<T> and(Validator<T> rule$) {
             validator = validator.compose(rule$);
             return this;
         }
 
-        public Constraint<T> and(Validator<T, T>... ruleArr$) {
+        public Constraint<T> and(Validator<T>... ruleArr$) {
             for (Validator rule : ruleArr$)
                 validator = validator.compose(rule);
             return this;

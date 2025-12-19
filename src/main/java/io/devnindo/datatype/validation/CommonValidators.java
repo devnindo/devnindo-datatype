@@ -26,7 +26,7 @@ public class CommonValidators
         else return Either.right(null);
     };
 
-    public static final <T> Validator<T> equal(T t$) {
+    public static final <T> Validator<T> eq(T t$) {
         return (t) -> {
             if (t$.equals(t))
                 return Either.right(null);

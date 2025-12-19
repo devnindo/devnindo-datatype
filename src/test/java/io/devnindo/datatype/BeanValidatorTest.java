@@ -11,7 +11,7 @@ import io.devnindo.datatype.validation.Violation;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
-import static io.devnindo.datatype.validation.validators.ValueRules.*;
+import static io.devnindo.datatype.validation.CommonValidators.*;
 
 public class BeanValidatorTest {
 
@@ -33,11 +33,11 @@ public class BeanValidatorTest {
         APerson person = personJS.toBean(APerson.class);
 
         BeanValidator<APerson> pensionEligibility = BeanValidator.create("FEMALE_PENSION_ELIGIBLE", APerson.class, $ -> {
-            $.required($APerson.age).and(gtThan(50));
-            $.required($APerson.gender).and(equal(Gender.female));
+            $.required($APerson.age).and(min(51));
+            $.required($APerson.gender).and(eq(Gender.female));
         });
 
-        Either<Violation, APerson> personEither = pensionEligibility.apply(person);
+        Either<Violation, Void> personEither = pensionEligibility.apply(person);
 
         Assertions.assertEquals(true, personEither.isLeft(), "Validation should fail for: "+personJS.encode());
         //System.out.println(personEither.left().toJson().encodePrettily());
