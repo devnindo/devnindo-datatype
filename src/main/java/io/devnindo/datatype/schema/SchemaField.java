@@ -23,6 +23,7 @@ import io.devnindo.datatype.util.Either;
 import io.devnindo.datatype.validation.Violation;
 import io.devnindo.datatype.validation.violations.LogicalViolations;
 import io.devnindo.datatype.validation.violations.TypeViolations;
+import jdk.jfr.Description;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -34,9 +35,9 @@ public  abstract class SchemaField<D extends DataBean, VAL> {
     public final Function<D, VAL> accessor;
     public final BiConsumer<D, VAL> setter;
     public final boolean required;
-    public final Class<VAL> dataType;
+    public final Class dataType;
     public final boolean isList;
-    public final TypeResolver<VAL> resolver;
+    public final TypeResolver resolver;
 
     SchemaField(String name, boolean required,  Class type, boolean isList, Function<D, VAL> accessor, BiConsumer<D, VAL> setter) {
         this.name = name;
@@ -73,6 +74,11 @@ public  abstract class SchemaField<D extends DataBean, VAL> {
     }
 
     abstract Object toJsonVal(VAL val);
+
+    @Description("To change a data bean, we should make a copy -> change it and then compare (old, new) to calculate delta")
+    public   VAL diff(D from, D to, BiConsumer<String, Object> changeBiConsumer){
+        throw new UnsupportedOperationException();
+    }
     /*public Either<Violation, VAL> fromJson(JsonObject jsObj) {
         Object val = jsObj.getValue(name);
         if (val != null)

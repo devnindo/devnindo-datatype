@@ -31,10 +31,20 @@ public class ListField<D extends DataBean, VAL> extends SchemaField<D, List<VAL>
             if (obj == null) continue;
             Either<Violation, Object> valEither = resolver.evalJsonVal(obj);
             if(valEither.isLeft())
-                return valEither;
+                return Either.left(valEither.left());
 
-            dataList.add(valEither.right())
+            dataList.add((VAL) valEither.right());
         }
         return Either.right(dataList);
+    }
+
+    @Override
+    Object toJsonVal(List<VAL> vals) {
+
+        JsonArray jsArr = new JsonArray();
+        for (VAL val: vals){
+            jsArr.add(resolver.toJsonVal(val));
+        }
+        return jsArr;
     }
 }
