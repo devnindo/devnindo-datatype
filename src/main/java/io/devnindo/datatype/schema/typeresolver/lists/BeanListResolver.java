@@ -39,7 +39,7 @@ public class BeanListResolver<T extends DataBean> implements TypeResolverIF<List
     }
 
     @Override
-    public Either<Violation, List<T>> evalJsonVal(Object val) {
+    public Either<Violation, List<T>> resolve(Object val) {
         if (val instanceof JsonArray == false)
             return Either.left(listJsonObjViolation);
         JsonArray array = (JsonArray) val;

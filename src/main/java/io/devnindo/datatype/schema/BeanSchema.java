@@ -16,6 +16,7 @@
 package io.devnindo.datatype.schema;
 
 import io.devnindo.datatype.json.JsonObject;
+import io.devnindo.datatype.schema.field.PlainField;
 import io.devnindo.datatype.schema.field.SchemaField;
 import io.devnindo.datatype.util.Either;
 import io.devnindo.datatype.validation.Violation;
@@ -24,55 +25,13 @@ import java.io.*;
 import java.nio.charset.StandardCharsets;
 import java.util.IdentityHashMap;
 import java.util.Map;
+import java.util.function.BiConsumer;
+import java.util.function.Function;
 import java.util.function.Supplier;
 
 public abstract class BeanSchema<T extends DataBean> {
 
-    private static final Map<Class<? extends DataBean>, BeanSchema> SCHEMA_MAP;
-    public static final String SCHEMA_IDX = ".schema_index";
 
-    static {
-        SCHEMA_MAP = new IdentityHashMap<>();
-        scanIndex();
-    }
-
-    // using class.forName to trigger static initializer of each schema
-    // taking advantage of compiler ensurance single time execution of static context
-    private static final void scanIndex(){
-        try (InputStream inputStream = BeanSchema.class.getResourceAsStream("/" + SCHEMA_IDX);
-             BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream, StandardCharsets.UTF_8))) {
-
-            if (inputStream == null) {
-                System.out.println("/resource/" + SCHEMA_IDX+" not found");
-            } else {
-                reader.lines().forEach(str -> {
-                try {
-                    Class.forName(str);
-                } catch (ClassNotFoundException e) {
-                    throw new RuntimeException(e);
-                }
-                });
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-    }
-
-    protected static final void regSchema(Class<? extends DataBean> beanClz, BeanSchema beanSchema, SchemaField... fieldArr){
-        String clzName = beanSchema.getClass().getName();
-        //System.out.println(beanSchema.getClass().getA);
-        SCHEMA_MAP.put(beanClz, beanSchema);
-        SCHEMA_MAP.put(beanClz, beanSchema);
-
-    }
-
-    protected static final BeanSchema getSchema(String clzName){
-        return SCHEMA_MAP.get(clzName);
-    }
-
-    public static void printSchemaMap(){
-        System.out.println(SCHEMA_MAP);
-    }
 
     public static <D extends DataBean> BeanSchema<D> of(Class<D> modelClz$) {
         BeanSchema schema = SCHEMA_MAP.get(modelClz$.getName());
@@ -108,9 +67,42 @@ public abstract class BeanSchema<T extends DataBean> {
 
     public abstract DataDiff<T> diff(T from$, T to$);
 
+
+
+
+    public static final <D extends DataBean, VAL> SchemaField<D, VAL>
+    plainField(String name$, Function<D, VAL> getter$, BiConsumer<D, VAL> setter$, Class<VAL> typeClz$, boolean required$) {
+        return new PlainField<>(name$, typeClz$, getter$, setter$, required$);
+    }
+
+    public static final <D extends DataBean, VAL> SchemaField<D, List<VAL>>
+    plainListField(String name$, Function<D, List<VAL>> getter$, BiConsumer<D, List<VAL>> setter$, Class<VAL> typeClz$, boolean required$) {
+        TypeResolver resolverIF = TypeResolverFactory.plainDataList(typeClz$);
+        return new SchemaField<>(name$, getter$, setter$, resolverIF, required$);
+    }
+
+    public static final <D extends DataBean, VAL extends DataBean> SchemaField<D, VAL>
+    beanField(String name, Function<D, VAL> getter, BiConsumer<D, VAL> setter, Class<VAL> typeClz, boolean required) {
+        TypeResolver resolverIF = TypeResolverFactory.beanType(typeClz);
+        return new SchemaField<>(name, getter, setter, resolverIF, required);
+    }
+
+    public static final <D extends DataBean, VAL extends DataBean> SchemaField<D, List<VAL>>
+    beanListField(String name$, Function<D, List<VAL>> getter$, BiConsumer<D, List<VAL>> setter$, Class<VAL> typeClz$, boolean required$) {
+        TypeResolver resolverIF = TypeResolverFactory.beanList(typeClz$);
+        return new SchemaField<>(name$, getter$, setter$, resolverIF, required$);
+    }
+
+    public static final <D extends DataBean, VAL extends Enum<VAL>> SchemaField<D, VAL>
+    enumField(String name$, Function<D, VAL> getter, BiConsumer<D, VAL> setter, Class<VAL> enumType$, boolean required$) {
+        TypeResolver resolverIF = TypeResolverFactory.enumType(enumType$);
+        return new SchemaField<>(name$, getter, setter, resolverIF, required$);
+    }
+
     protected final Object clone() throws CloneNotSupportedException {
         throw new CloneNotSupportedException();
     }
+
 
     @java.io.Serial
     private void readObject(ObjectInputStream in) throws IOException,

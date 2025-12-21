@@ -11,8 +11,8 @@ import java.util.function.Function;
 
 public class BeanField<D extends DataBean, VAL extends DataBean> extends SchemaField<D, VAL> {
     private final Violation beanViolation;
-    public BeanField(String name, boolean required, Class type,  Function<D, VAL> accessor, BiConsumer<D, VAL> setter) {
-        super(name, required, type, false, accessor, setter);
+    public BeanField(String name,  Class type,  Function<D, VAL> accessor, BiConsumer<D, VAL> setter) {
+        super(name,   type, false, accessor, setter);
         beanViolation = TypeViolations.beanType(this.dataType);
     }
 

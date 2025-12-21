@@ -19,10 +19,10 @@ import io.devnindo.datatype.util.Either;
 import io.devnindo.datatype.validation.Violation;
 import io.devnindo.datatype.validation.violations.TypeViolations;
 
-public class IntegerResolver implements SimpleTypeResolverIF<Integer> {
+public class IntegerResolver implements TypeResolverIF {
 
     @Override
-    public Either<Violation, Integer> evalJsonVal(Object val) {
+    public Either<Violation, Integer> resolve(Object val) {
         if (val instanceof Integer == false)
             return Either.left(TypeViolations.INTEGER_TYPE);
 

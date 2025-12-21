@@ -19,9 +19,9 @@ import io.devnindo.datatype.util.Either;
 import io.devnindo.datatype.validation.Violation;
 import io.devnindo.datatype.validation.violations.TypeViolations;
 
-public class LongResolver implements SimpleTypeResolverIF<Long> {
+public class LongResolver implements TypeResolverIF<Object, Long> {
     @Override
-    public Either<Violation, Long> evalJsonVal(Object val) {
+    public Either<Violation, Long> resolve(Object val) {
         if (val instanceof Long) {
             return Either.right((Long) val);
         }
@@ -45,5 +45,9 @@ public class LongResolver implements SimpleTypeResolverIF<Long> {
 
     }
 
+    @Override
+    public Object toJsonVal(Long aLong) {
+        return aLong.toString()+"L";
+    }
 }
 

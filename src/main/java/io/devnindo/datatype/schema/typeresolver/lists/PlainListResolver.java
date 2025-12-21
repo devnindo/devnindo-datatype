@@ -37,7 +37,7 @@ public class PlainListResolver<T> implements TypeResolverIF<List<T>> {
     }
 
     @Override
-    public Either<Violation, List<T>> evalJsonVal(Object val) {
+    public Either<Violation, List<T>> resolve(Object val) {
         // null check should have already be done
         if (val instanceof String)
             return Either.left(listTypeViolation);

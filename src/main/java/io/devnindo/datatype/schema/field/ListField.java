@@ -16,8 +16,8 @@ import java.util.function.Function;
 public class ListField<D extends DataBean, VAL> extends SchemaField<D, List<VAL>> {
 
     public final TypeResolverIF resolver;
-    public ListField(String name, boolean required, Class type, Function<D, List<VAL>> accessor, BiConsumer<D, List<VAL>> setter) {
-        super(name, required, type, true, accessor, setter);
+    public ListField(String name,  Class type, Function<D, List<VAL>> accessor, BiConsumer<D, List<VAL>> setter) {
+        super(name,  type, true, accessor, setter);
         resolver = ResolverFactory.get(dataType);
     }
 
@@ -33,7 +33,7 @@ public class ListField<D extends DataBean, VAL> extends SchemaField<D, List<VAL>
         for (int idx = 0; idx < array.size(); idx++) {
             Object obj = array.getValue(idx);
             if (obj == null) continue;
-            Either<Violation, Object> valEither = resolver.evalJsonVal(obj);
+            Either<Violation, Object> valEither = resolver.resolve(obj);
             if(valEither.isLeft())
                 return Either.left(valEither.left());
 

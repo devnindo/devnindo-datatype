@@ -23,7 +23,7 @@ import java.util.function.Consumer;
 public class IntegerHashResolver implements TypeResolverIF<Integer> {
 
     @Override
-    public Either<Violation, Integer> evalJsonVal(Object val) {
+    public Either<Violation, Integer> resolve(Object val) {
         throw new UnsupportedOperationException();
     }
 

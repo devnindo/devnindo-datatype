@@ -23,12 +23,18 @@ import java.util.function.Consumer;
 /**
  *
  * */
-public interface TypeResolverIF<T> {
-    public Either<Violation, T> evalJsonVal(Object val);
+public interface TypeResolverIF<S, T> {
+    public Either<Violation, T> resolve(S val);
 
-    public Object toJsonVal(T t);
+    public S toJsonVal(T t);
 
-    public T diff(T from, T to, Consumer changeConsumer);
+    default T diff(T newVal, T oldVal, Consumer changeConsumer) {
+        if (newVal == null || newVal.equals(oldVal))
+            return oldVal;
+
+        changeConsumer.accept(oldVal);
+        return newVal;
+    }
 
 
 }

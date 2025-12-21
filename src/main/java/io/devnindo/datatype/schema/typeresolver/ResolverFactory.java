@@ -17,7 +17,14 @@ package io.devnindo.datatype.schema.typeresolver;
 
 import io.devnindo.datatype.json.JsonArray;
 import io.devnindo.datatype.json.JsonObject;
+import io.devnindo.datatype.schema.BeanSchema;
+import io.devnindo.datatype.schema.DataBean;
+import io.devnindo.datatype.schema.field.SchemaField;
 
+import java.io.BufferedReader;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.nio.charset.StandardCharsets;
 import java.util.IdentityHashMap;
 import java.util.Map;
 
@@ -36,8 +43,57 @@ public final class ResolverFactory {
             put(JsonArray.class, new JsonArrayResolver());
         }
     };
+
+    public static final String SCHEMA_IDX = ".schema_index";
+
+    static {
+        scanSchemaIndex();
+    }
+
+    // using class.forName to trigger static initializer of each schema
+    // taking advantage of compiler ensurance single time execution of static context
+    private static final void scanSchemaIndex(){
+        try (InputStream inputStream = BeanSchema.class.getResourceAsStream("/" + SCHEMA_IDX);
+             BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream, StandardCharsets.UTF_8))) {
+
+            if (inputStream == null) {
+                System.out.println("/resource/" + SCHEMA_IDX+" not found");
+            } else {
+                reader.lines().forEach(str -> {
+                    try {
+                        Class.forName(str);
+                    } catch (ClassNotFoundException e) {
+                        throw new RuntimeException(e);
+                    }
+                });
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    protected static final void regSchema(Class<? extends DataBean> beanClz, BeanSchema beanSchema, SchemaField... fieldArr){
+        String clzName = beanSchema.getClass().getName();
+        //System.out.println(beanSchema.getClass().getA);
+        resolverMap.put(beanClz, beanSchema);
+
+    }
+
+    protected static final BeanSchema getSchema(String clzName){
+        return SCHEMA_MAP.get(clzName);
+    }
+
+    public static void printSchemaMap(){
+        System.out.println(SCHEMA_MAP);
+    }
+
+
+
     private ResolverFactory(){}
 
+    public static final TypeResolverIF regBean(Class<DataBean> beanClz, BeanSchema schema){
+        resolverMap.put(beanClz, schema);
+    }
     public static final TypeResolverIF get(Class type){
         return resolverMap.get(type);
     }

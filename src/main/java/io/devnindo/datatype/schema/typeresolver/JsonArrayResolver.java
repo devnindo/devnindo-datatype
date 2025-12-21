@@ -20,9 +20,9 @@ import io.devnindo.datatype.util.Either;
 import io.devnindo.datatype.validation.Violation;
 import io.devnindo.datatype.validation.violations.TypeViolations;
 
-public class JsonArrayResolver implements SimpleTypeResolverIF<JsonArray> {
+public class JsonArrayResolver implements TypeResolverIF {
     @Override
-    public Either<Violation, JsonArray> evalJsonVal(Object val) {
+    public Either<Violation, JsonArray> resolve(Object val) {
         if (val instanceof JsonArray == false)
             return Either.left(TypeViolations.JSON_ARR_TYPE);
         return Either.right((JsonArray) val);

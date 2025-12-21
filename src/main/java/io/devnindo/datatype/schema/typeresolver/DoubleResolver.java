@@ -19,9 +19,9 @@ import io.devnindo.datatype.util.Either;
 import io.devnindo.datatype.validation.Violation;
 import io.devnindo.datatype.validation.violations.TypeViolations;
 
-public class DoubleResolver implements SimpleTypeResolverIF<Double> {
+public class DoubleResolver implements TypeResolverIF {
     @Override
-    public Either<Violation, Double> evalJsonVal(Object val) {
+    public Either<Violation, Double> resolve(Object val) {
         if (val instanceof Number == false)
             return Either.left(TypeViolations.DOUBLE_TYPE);
 

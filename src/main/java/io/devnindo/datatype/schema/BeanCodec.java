@@ -83,7 +83,7 @@ public class BeanCodec {
                 if (type.isAssignableFrom(DataBean.class)) { // handle list of bean
                      valEither = parseBean(parser, type);
                 } else { // handle other plain type
-                    valEither = ResolverFactory.get(type).evalJsonVal(parser.currentValue());
+                    valEither = ResolverFactory.get(type).resolve(parser.currentValue());
                 }
                 if (valEither.isLeft()){
                     return valEither;

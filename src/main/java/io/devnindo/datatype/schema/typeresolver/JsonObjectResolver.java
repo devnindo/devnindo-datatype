@@ -22,14 +22,23 @@ import io.devnindo.datatype.util.Either;
 import io.devnindo.datatype.validation.Violation;
 import io.devnindo.datatype.validation.violations.TypeViolations;
 
+import java.lang.reflect.ParameterizedType;
+import java.util.Map;
 import java.util.function.Consumer;
 
-public class JsonObjectResolver implements TypeResolverIF<JsonObject> {
+public class JsonObjectResolver implements TypeResolverIF<Object, JsonObject> {
 
     @Override
-    public Either<Violation, JsonObject> evalJsonVal(Object val) {
-        if (val instanceof JsonObject == false)
+    public Either<Violation, JsonObject> resolve(Object val) {
+        // instanceof ensure null check too
+        if (val instanceof Iterable == false)
             return Either.left(TypeViolations.JSON_OBJ_TYPE);
+
+        Iterable  it = (Iterable) val;
+
+
+
+
 
         return Either.right((JsonObject) val);
     }

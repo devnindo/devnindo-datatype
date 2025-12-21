@@ -27,9 +27,9 @@ import static java.time.format.DateTimeFormatter.ISO_INSTANT;
 /**
  *  Instant resolver accept a JsonVal in ISO UTC format
  * */
-public class InstantResolver implements SimpleTypeResolverIF<Instant> {
+public class InstantResolver implements TypeResolverIF {
     @Override
-    public Either<Violation, Instant> evalJsonVal(Object val) {
+    public Either<Violation, Instant> resolve(Object val) {
         if (val instanceof String == false)
             return Either.left(TypeViolations.INSTANT_UTC_TYPE);
 

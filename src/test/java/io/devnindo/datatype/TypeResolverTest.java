@@ -27,7 +27,7 @@ public class TypeResolverTest {
     @Test
     public void test_plain_list_resolve_success() {
         TypeResolverIF<List<Integer>> resolver = ResolverFactory.plainDataList(Integer.class);
-        Either<Violation, List<Integer>> listIntEither = resolver.evalJsonVal(new JsonArray("[123, 234, 534]"));
+        Either<Violation, List<Integer>> listIntEither = resolver.resolve(new JsonArray("[123, 234, 534]"));
 
         Assertions.assertEquals(Boolean.TRUE, listIntEither.isRight());
         listIntEither.right().forEach(item -> {
@@ -39,7 +39,7 @@ public class TypeResolverTest {
     @Test
     public void test_plain_list_resolve_fail() {
         TypeResolverIF<List<Integer>> resolver = ResolverFactory.plainDataList(Integer.class);
-        Either<Violation, List<Integer>> listIntEither = resolver.evalJsonVal(new JsonArray("[123, 234, \"534\"]"));
+        Either<Violation, List<Integer>> listIntEither = resolver.resolve(new JsonArray("[123, 234, \"534\"]"));
         Assertions.assertEquals(Boolean.TRUE, listIntEither.isLeft());
         System.out.println(listIntEither.left().constraint);
         Assertions.assertEquals("PLAIN_DATA_LIST_TYPE", listIntEither.left().constraint);
@@ -50,14 +50,14 @@ public class TypeResolverTest {
     @Test
     public void test_json_object_list_resolve_success() {
         TypeResolverIF<List<JsonObject>> resolver = ResolverFactory.plainDataList(JsonObject.class);
-        Either<Violation, List<JsonObject>> listJsEither = resolver.evalJsonVal(DataSample.addressArr());
+        Either<Violation, List<JsonObject>> listJsEither = resolver.resolve(DataSample.addressArr());
         Assertions.assertEquals(Boolean.TRUE, listJsEither.isRight());
     }
 
     @Test
     public void test_bean_list_resolve_success() {
         TypeResolverIF<List<Address>> resolver = ResolverFactory.beanList(Address.class);
-        Either<Violation, List<Address>> listJsEither = resolver.evalJsonVal(DataSample.addressArr());
+        Either<Violation, List<Address>> listJsEither = resolver.resolve(DataSample.addressArr());
         Assertions.assertEquals(Boolean.TRUE, listJsEither.isRight());
 
         List<Address> addressList = listJsEither.right();
@@ -68,7 +68,7 @@ public class TypeResolverTest {
     @Test
     public void test_bean_list_resolve_fail() {
         TypeResolverIF<List<Address>> resolver = ResolverFactory.beanList(Address.class);
-        Either<Violation, List<Address>> listJsEither = resolver.evalJsonVal(DataSample.invalidAddressArr());
+        Either<Violation, List<Address>> listJsEither = resolver.resolve(DataSample.invalidAddressArr());
         Assertions.assertEquals(Boolean.TRUE, listJsEither.isLeft());
         System.out.println(listJsEither.left().toJsonObject().encodePrettily());
 

@@ -20,7 +20,7 @@ import io.devnindo.datatype.validation.Violation;
 import io.devnindo.datatype.validation.violations.TypeViolations;
 
 @Deprecated
-public class EnumResolver<T extends Enum<T>> implements SimpleTypeResolverIF<T> {
+public class EnumResolver<T extends Enum<T>> implements TypeResolverIF {
 
     public final Class<T> enumType;
     private final Violation enumViolation;
@@ -31,7 +31,7 @@ public class EnumResolver<T extends Enum<T>> implements SimpleTypeResolverIF<T> 
     }
 
     @Override
-    public Either<Violation, T> evalJsonVal(Object val) {
+    public Either<Violation, T> resolve(Object val) {
         if (val instanceof String == false) // null safe operation
             return Either.left(enumViolation);
         try {

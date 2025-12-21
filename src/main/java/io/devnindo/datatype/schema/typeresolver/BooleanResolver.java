@@ -19,9 +19,9 @@ import io.devnindo.datatype.util.Either;
 import io.devnindo.datatype.validation.Violation;
 import io.devnindo.datatype.validation.violations.TypeViolations;
 
-public class BooleanResolver implements SimpleTypeResolverIF<Boolean> {
+public class BooleanResolver implements TypeResolverIF {
     @Override
-    public Either<Violation, Boolean> evalJsonVal(Object val) {
+    public Either<Violation, Boolean> resolve(Object val) {
         if (val instanceof Boolean)
             return Either.right((Boolean) val);
         if (val instanceof String) {

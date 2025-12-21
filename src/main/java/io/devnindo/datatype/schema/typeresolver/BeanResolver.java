@@ -35,7 +35,7 @@ public class BeanResolver<D extends DataBean> implements TypeResolverIF<D> {
     }
 
     @Override
-    public Either<Violation, D> evalJsonVal(Object val) {
+    public Either<Violation, D> resolve(Object val) {
         if (val instanceof JsonObject == false)
             return Either.left(beanViolation);
         JsonObject obj = (JsonObject) val;

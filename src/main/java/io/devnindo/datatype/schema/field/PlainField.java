@@ -13,13 +13,13 @@ public class PlainField<D extends DataBean, VAL> extends SchemaField<D, VAL>{
 
     public final TypeResolverIF resolver;
     public PlainField(String name, boolean required, Class type, Function<D, VAL> accessor, BiConsumer<D, VAL> setter) {
-        super(name, required, type, false, accessor, setter);
+        super(name,  type, false, accessor, setter);
         resolver = ResolverFactory.get(dataType);
     }
 
     @Override
     public Either<Violation, VAL> resolveVal(Object val) {
-       return resolver.evalJsonVal(val);
+       return resolver.resolve(val);
     }
 
     @Override
