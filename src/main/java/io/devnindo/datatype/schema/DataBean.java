@@ -36,7 +36,7 @@ public interface DataBean extends Jsonable {
 
     public default String encode() {
         BeanSchema  schema = BeanSchema.of(this.getClass().getName());
-        return schema.toJsonStr(this);
+        return schema.encodeStr(this);
     }
 
 

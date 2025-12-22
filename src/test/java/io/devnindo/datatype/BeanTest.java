@@ -6,7 +6,7 @@ import io.devnindo.datatype.schematest.APerson;
 import io.devnindo.datatype.schematest.Address;
 import io.devnindo.datatype.schematest.DataSample;
 import io.devnindo.datatype.util.Either;
-import io.devnindo.datatype.validation.ObjViolation;
+import io.devnindo.datatype.validation.SchemaViolation;
 import io.devnindo.datatype.validation.Violation;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
@@ -56,7 +56,7 @@ public class BeanTest {
         Assertions.assertEquals(Boolean.TRUE, addressEither.isLeft());
 
         Violation violation = addressEither.left();
-        Assertions.assertEquals(ObjViolation.class, violation.getClass());
+        Assertions.assertEquals(SchemaViolation.class, violation.getClass());
 
 
         Assertions.assertTrue(violation.hasVarCtx(), "should have more than one type constraint violated");
@@ -74,7 +74,7 @@ public class BeanTest {
         Assertions.assertEquals(Boolean.TRUE, addressEither.isLeft());
 
         Violation violation = addressEither.left();
-        Assertions.assertEquals(ObjViolation.class, violation.getClass());
+        Assertions.assertEquals(SchemaViolation.class, violation.getClass());
 
         System.out.println(violation.toJsonObject().encodePrettily());
         Assertions.assertTrue(violation.hasVarCtx(), "should have more than one type constraint violated");

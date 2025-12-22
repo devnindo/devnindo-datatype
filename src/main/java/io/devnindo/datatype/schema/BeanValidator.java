@@ -20,12 +20,10 @@ import io.devnindo.datatype.json.JsonObject;
 import io.devnindo.datatype.schema.field.SchemaField;
 import io.devnindo.datatype.util.Either;
 import io.devnindo.datatype.validation.CommonValidators;
-import io.devnindo.datatype.validation.ObjViolation;
+import io.devnindo.datatype.validation.SchemaViolation;
 import io.devnindo.datatype.validation.Validator;
 import io.devnindo.datatype.validation.Violation;
-import io.devnindo.datatype.validation.violations.LogicalViolations;
 
-import java.util.HashMap;
 import java.util.IdentityHashMap;
 import java.util.Map;
 import java.util.function.Consumer;
@@ -56,7 +54,7 @@ public final class BeanValidator<D extends DataBean>
     @Override
     public Either<Violation, Void> apply(D beanObj$) {
 
-        ObjViolation violation = new ObjViolation(constraintName);
+        SchemaViolation violation = new SchemaViolation(constraintName);
         condition.forEach((field, constraint) -> {
 
             Object data = field.accessor.apply(beanObj$);

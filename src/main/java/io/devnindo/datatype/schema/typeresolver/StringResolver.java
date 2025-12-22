@@ -19,12 +19,17 @@ import io.devnindo.datatype.util.Either;
 import io.devnindo.datatype.validation.Violation;
 import io.devnindo.datatype.validation.violations.TypeViolations;
 
-public class StringResolver implements TypeResolverIF {
+public class StringResolver implements TypeResolverIF<Object, String> {
     @Override
     public Either<Violation, String> resolve(Object val) {
         if (val instanceof String == false)
             return Either.left(TypeViolations.STRING_TYPE);
         return Either.right((String) val);
+    }
+
+    @Override
+    public Object toJsonVal(String str) {
+        return str;
     }
 }
 

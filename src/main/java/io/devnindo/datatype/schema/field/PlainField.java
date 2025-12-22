@@ -12,7 +12,7 @@ import java.util.function.Function;
 public class PlainField<D extends DataBean, VAL> extends SchemaField<D, VAL>{
 
     public final TypeResolverIF resolver;
-    public PlainField(String name, boolean required, Class type, Function<D, VAL> accessor, BiConsumer<D, VAL> setter) {
+    public PlainField(String name, Class type, Function<D, VAL> accessor, BiConsumer<D, VAL> setter) {
         super(name,  type, false, accessor, setter);
         resolver = ResolverFactory.get(dataType);
     }

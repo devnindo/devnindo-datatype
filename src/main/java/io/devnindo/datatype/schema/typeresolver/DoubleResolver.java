@@ -19,7 +19,7 @@ import io.devnindo.datatype.util.Either;
 import io.devnindo.datatype.validation.Violation;
 import io.devnindo.datatype.validation.violations.TypeViolations;
 
-public class DoubleResolver implements TypeResolverIF {
+public class DoubleResolver implements TypeResolverIF<Object, Double> {
     @Override
     public Either<Violation, Double> resolve(Object val) {
         if (val instanceof Number == false)
@@ -28,6 +28,11 @@ public class DoubleResolver implements TypeResolverIF {
         Double dVal = ((Number) val).doubleValue();
         return Either.right(dVal);
 
+    }
+
+    @Override
+    public Object toJsonVal(Double aDouble) {
+        return aDouble;
     }
 }
 

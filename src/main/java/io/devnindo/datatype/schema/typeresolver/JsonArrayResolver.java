@@ -20,12 +20,17 @@ import io.devnindo.datatype.util.Either;
 import io.devnindo.datatype.validation.Violation;
 import io.devnindo.datatype.validation.violations.TypeViolations;
 
-public class JsonArrayResolver implements TypeResolverIF {
+public class JsonArrayResolver implements TypeResolverIF<Object, JsonArray> {
     @Override
     public Either<Violation, JsonArray> resolve(Object val) {
         if (val instanceof JsonArray == false)
             return Either.left(TypeViolations.JSON_ARR_TYPE);
         return Either.right((JsonArray) val);
+    }
+
+    @Override
+    public Object toJsonVal(JsonArray jsArr) {
+        return jsArr;
     }
 
 }

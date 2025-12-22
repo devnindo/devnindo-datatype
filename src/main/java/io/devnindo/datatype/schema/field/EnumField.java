@@ -11,7 +11,8 @@ import java.util.function.Function;
 
 public class EnumField <D extends DataBean, VAL extends Enum<VAL>> extends SchemaField<D, VAL> {
     private final Violation enumViolation ;
-    EnumField(String name,  Class type, Function<D, VAL> accessor, BiConsumer<D, VAL> setter) {
+
+    public EnumField(String name,  Class type, Function<D, VAL> accessor, BiConsumer<D, VAL> setter) {
         super(name,  type, false, accessor, setter);
         enumViolation = TypeViolations.enumVal(this.dataType);
     }

@@ -5,7 +5,7 @@ import io.devnindo.datatype.schema.*;
 import io.devnindo.datatype.schema.field.SchemaField;
 import io.devnindo.datatype.struct.StringIdMap;
 import io.devnindo.datatype.util.Either;
-import io.devnindo.datatype.validation.ObjViolation;
+import io.devnindo.datatype.validation.SchemaViolation;
 import io.devnindo.datatype.validation.Violation;
 import java.util.List;
 import java.util.Map;
@@ -38,7 +38,7 @@ public class $APerson extends BeanSchema<APerson> {
     }
 
     @Override
-    public String toJsonStr(APerson dataBean$) {
+    public String encodeStr(APerson dataBean$) {
         return "";
     }
 
@@ -56,7 +56,7 @@ public class $APerson extends BeanSchema<APerson> {
         Either<Violation, Long> idEither = id.fromJson(data);
         Either<Violation, Integer> ageEither = age.fromJson(data);
 
-        ObjViolation violation = new ObjViolation("SCHEMA::"+APerson.class.getSimpleName());
+        SchemaViolation violation = new SchemaViolation("SCHEMA::"+APerson.class.getSimpleName());
         violation.check(gender, genderEither);
         violation.check(address_list, addressListEither);
         violation.check(employer, employerEither);

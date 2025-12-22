@@ -6,7 +6,7 @@ import io.devnindo.datatype.json.JsonBag;
 import io.devnindo.datatype.schema.field.SchemaField;
 import io.devnindo.datatype.schema.typeresolver.ResolverFactory;
 import io.devnindo.datatype.util.Either;
-import io.devnindo.datatype.validation.ObjViolation;
+import io.devnindo.datatype.validation.SchemaViolation;
 import io.devnindo.datatype.validation.Violation;
 import io.devnindo.datatype.validation.violations.TypeViolations;
 
@@ -32,7 +32,7 @@ public class BeanCodec {
             }
 
             DataBean owner = schema.newBean().get();
-            ObjViolation violation = new ObjViolation("SCHEMA::"+beanClz.getSimpleName());
+            SchemaViolation violation = new SchemaViolation("SCHEMA::"+beanClz.getSimpleName());
             while (parser.nextToken() != JsonToken.END_OBJECT) {
                 // The current token should be the field name (key)
                 if (parser.currentToken() == JsonToken.FIELD_NAME) {

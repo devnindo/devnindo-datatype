@@ -16,17 +16,18 @@
 
 package io.devnindo.datatype.validation;
 
+import io.devnindo.datatype.schema.BeanSchema;
 import io.devnindo.datatype.schema.DataBean;
 import io.devnindo.datatype.schema.field.SchemaField;
+import io.devnindo.datatype.struct.StringIdMap;
 import io.devnindo.datatype.util.Either;
 import io.devnindo.datatype.json.JsonObject;
 
-public class ObjViolation<D extends DataBean> extends Violation<JsonObject> {
+public class SchemaViolation<D extends DataBean> extends Violation<JsonObject> {
 
 
-    public ObjViolation(String name$) {
-
-        super(name$, new JsonObject());
+    public SchemaViolation(BeanSchema schema, int fieldCount) {
+        super(schema.getClass().getSimpleName(), new StringIdMap<>(fieldCount));
     }
 
 
@@ -35,7 +36,7 @@ public class ObjViolation<D extends DataBean> extends Violation<JsonObject> {
     }
 
 
-    public ObjViolation check(SchemaField<D, ?> f$, Either<Violation, ?> either$) {
+    public SchemaViolation check(SchemaField<D, ?> f$, Either<Violation, ?> either$) {
         if (either$.isLeft())
             ctxData.put(f$.name, either$.left());
 

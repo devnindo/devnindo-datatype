@@ -19,7 +19,7 @@ import io.devnindo.datatype.util.Either;
 import io.devnindo.datatype.validation.Violation;
 import io.devnindo.datatype.validation.violations.TypeViolations;
 
-public class BooleanResolver implements TypeResolverIF {
+public class BooleanResolver implements TypeResolverIF<Object, boolean> {
     @Override
     public Either<Violation, Boolean> resolve(Object val) {
         if (val instanceof Boolean)
@@ -29,6 +29,8 @@ public class BooleanResolver implements TypeResolverIF {
         }
         return Either.left(TypeViolations.BOOLEAN_TYPE);
     }
+
+
 
 }
 

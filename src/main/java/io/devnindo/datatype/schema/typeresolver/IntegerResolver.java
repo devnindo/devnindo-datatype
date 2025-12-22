@@ -19,7 +19,7 @@ import io.devnindo.datatype.util.Either;
 import io.devnindo.datatype.validation.Violation;
 import io.devnindo.datatype.validation.violations.TypeViolations;
 
-public class IntegerResolver implements TypeResolverIF {
+public class IntegerResolver implements TypeResolverIF<Object, Integer> {
 
     @Override
     public Either<Violation, Integer> resolve(Object val) {
@@ -27,6 +27,11 @@ public class IntegerResolver implements TypeResolverIF {
             return Either.left(TypeViolations.INTEGER_TYPE);
 
         return Either.right((Integer) val);
+    }
+
+    @Override
+    public Object toJsonVal(Integer intVal) {
+        return intVal;
     }
 }
 

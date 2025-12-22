@@ -3,30 +3,42 @@ package io.devnindo.datatype.schematest;
 import io.devnindo.datatype.json.JsonObject;
 import io.devnindo.datatype.schema.*;
 import io.devnindo.datatype.schema.field.SchemaField;
+import io.devnindo.datatype.schema.typeresolver.ResolverFactory;
+import io.devnindo.datatype.struct.StringIdMap;
 import io.devnindo.datatype.util.Either;
-import io.devnindo.datatype.validation.ObjViolation;
+import io.devnindo.datatype.validation.SchemaViolation;
 import io.devnindo.datatype.validation.Violation;
 
 import java.util.List;
+import java.util.Map;
 
 public class $Address extends BeanSchema<Address> {
     public static final SchemaField<Address, String> city;
     public static final SchemaField<Address, List<String>> road_list;
 
     static {
-         city = plainField("city", Address::getCity, Address::setCity, String.class, false);
-         road_list = plainListField("road_list", Address::getRoadList, Address::setRoadList, String.class, false);
-         regSchema(Address.class, new $Address(), city, road_list);
+         city = plainField("city", String.class, Address::getCity, Address::setCity);
+         road_list = plainListField("road_list", String.class, Address::getRoadList, Address::setRoadList);
+         ResolverFactory.regResolver(Address.class, new $Address());
     }
 
+    private static final Map<String, SchemaField> fieldMap = new StringIdMap<>(6){{
+        put(city.name, city);
+        put(road_list.name, road_list);
 
+    }};
 
     @Override
-    public Either<Violation, Address> fromJsonObj(JsonObject data) {
+    public Map<String, SchemaField> fieldMap() {
+        return fieldMap();
+    }
+
+    @Override
+    public Either<Violation, Address> resolve(Iterable<Map.Entry<String, Object>> dataMap) {
         Either<Violation, String> cityEither = city.fromJson(data);
         Either<Violation, List<String>> roadListEither = road_list.fromJson(data);
 
-        ObjViolation violation = newViolation(Address.class);
+        SchemaViolation violation = newViolation(Address.class);
         violation.check(city, cityEither);
         violation.check(road_list, roadListEither);
 
@@ -53,7 +65,7 @@ public class $Address extends BeanSchema<Address> {
     }
 
     @Override
-    public String toJsonStr(Address dataBean$) {
+    public String encodeStr(Address dataBean$) {
         return "";
     }
 

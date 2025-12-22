@@ -26,21 +26,29 @@ import java.lang.reflect.ParameterizedType;
 import java.util.Map;
 import java.util.function.Consumer;
 
+//TODO: we should have a separate Map<String, Object> resolver
 public class JsonObjectResolver implements TypeResolverIF<Object, JsonObject> {
 
     @Override
     public Either<Violation, JsonObject> resolve(Object val) {
         // instanceof ensure null check too
-        if (val instanceof Iterable == false)
-            return Either.left(TypeViolations.JSON_OBJ_TYPE);
+        if(val instanceof JsonObject)
+            return Either.right((JsonObject) val);
 
-        Iterable  it = (Iterable) val;
+        if(val instanceof Map){
+            Map valMap = (Map)val;
+            if (valMap.size() == 0){
+                return Either.right(new JsonObject());
+            }
+            boolean compatible = valMap.keySet().iterator().next().getClass().equals(String.class);
+            if (compatible){
+                JsonObject js = new JsonObject((Map<String, Object>) val);
+                return Either.right(js);
+            }
+        }
 
+        return Either.left(TypeViolations.JSON_OBJ_TYPE);
 
-
-
-
-        return Either.right((JsonObject) val);
     }
 
     @Override

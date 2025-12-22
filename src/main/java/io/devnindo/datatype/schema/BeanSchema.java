@@ -16,87 +16,67 @@
 package io.devnindo.datatype.schema;
 
 import io.devnindo.datatype.json.JsonObject;
-import io.devnindo.datatype.schema.field.PlainField;
-import io.devnindo.datatype.schema.field.SchemaField;
+import io.devnindo.datatype.schema.field.*;
+import io.devnindo.datatype.schema.typeresolver.ResolverFactory;
+import io.devnindo.datatype.schema.typeresolver.TypeResolverIF;
 import io.devnindo.datatype.util.Either;
 import io.devnindo.datatype.validation.Violation;
 
 import java.io.*;
-import java.nio.charset.StandardCharsets;
-import java.util.IdentityHashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.function.BiConsumer;
 import java.util.function.Function;
 import java.util.function.Supplier;
 
-public abstract class BeanSchema<T extends DataBean> {
-
-
+public abstract class BeanSchema<D extends DataBean> implements TypeResolverIF<Iterable<Map.Entry<String, Object>>, D> {
 
     public static <D extends DataBean> BeanSchema<D> of(Class<D> modelClz$) {
-        BeanSchema schema = SCHEMA_MAP.get(modelClz$.getName());
-        if (schema == null)
+        TypeResolverIF schemaIF = ResolverFactory.get(modelClz$);
+        // both null & type check
+        if (schemaIF instanceof BeanSchema == false)
             throw new IllegalStateException("No schema found for DataBean: " + modelClz$.getName());
 
-        return schema;
+        return (BeanSchema<D>) schemaIF;
     }
 
-    /**
-     * @param clzName fully qualified name of the target DataBean
-     * */
-    public static <D extends DataBean> BeanSchema<D> of(String clzName) {
-        BeanSchema schema = SCHEMA_MAP.get(clzName);
-        if (schema == null)
-            throw new IllegalStateException("No schema found for DataBean: " + clzName);
 
-        return schema;
-    }
 
 
 
     public abstract Map<String, SchemaField> fieldMap();
-    public abstract Supplier<T> newBean();
+    public abstract Supplier<D> newBean();
 
-    public abstract JsonObject toJsonObj(T dataBean$);
+    public abstract JsonObject toJsonObj(D dataBean$);
 
-    public abstract String toJsonStr(T dataBean$);
+    public abstract String encodeStr(D dataBean$);
 
     // kept for backward compatibility
-    public abstract Either<Violation, T> fromJsonObj(JsonObject js);
+    public abstract Either<Violation, D> fromJsonObj(JsonObject js);
 
 
-    public abstract DataDiff<T> diff(T from$, T to$);
-
-
+    public abstract DataDiff<D> diff(D from$, D to$);
 
 
     public static final <D extends DataBean, VAL> SchemaField<D, VAL>
-    plainField(String name$, Function<D, VAL> getter$, BiConsumer<D, VAL> setter$, Class<VAL> typeClz$, boolean required$) {
-        return new PlainField<>(name$, typeClz$, getter$, setter$, required$);
+    plainField(String name$, Class<VAL> typeClz$, Function<D, VAL> getter$, BiConsumer<D, VAL> setter$) {
+        return new PlainField<>(name$, typeClz$, getter$, setter$);
     }
 
     public static final <D extends DataBean, VAL> SchemaField<D, List<VAL>>
-    plainListField(String name$, Function<D, List<VAL>> getter$, BiConsumer<D, List<VAL>> setter$, Class<VAL> typeClz$, boolean required$) {
-        TypeResolver resolverIF = TypeResolverFactory.plainDataList(typeClz$);
-        return new SchemaField<>(name$, getter$, setter$, resolverIF, required$);
+    plainListField(String name$, Class<VAL> typeClz$, Function<D, List<VAL>> getter$, BiConsumer<D, List<VAL>> setter$) {
+         return new ListField<>(name$, typeClz$, getter$, setter$);
     }
 
     public static final <D extends DataBean, VAL extends DataBean> SchemaField<D, VAL>
-    beanField(String name, Function<D, VAL> getter, BiConsumer<D, VAL> setter, Class<VAL> typeClz, boolean required) {
-        TypeResolver resolverIF = TypeResolverFactory.beanType(typeClz);
-        return new SchemaField<>(name, getter, setter, resolverIF, required);
+    beanField(String name$, Class<D> typeClz$, Function<D, VAL> getter$, BiConsumer<D, VAL> setter$) {
+         return new BeanField<>(name$, typeClz$, getter$, setter$);
     }
 
-    public static final <D extends DataBean, VAL extends DataBean> SchemaField<D, List<VAL>>
-    beanListField(String name$, Function<D, List<VAL>> getter$, BiConsumer<D, List<VAL>> setter$, Class<VAL> typeClz$, boolean required$) {
-        TypeResolver resolverIF = TypeResolverFactory.beanList(typeClz$);
-        return new SchemaField<>(name$, getter$, setter$, resolverIF, required$);
-    }
 
     public static final <D extends DataBean, VAL extends Enum<VAL>> SchemaField<D, VAL>
-    enumField(String name$, Function<D, VAL> getter, BiConsumer<D, VAL> setter, Class<VAL> enumType$, boolean required$) {
-        TypeResolver resolverIF = TypeResolverFactory.enumType(enumType$);
-        return new SchemaField<>(name$, getter, setter, resolverIF, required$);
+    enumField(String name$, Class<VAL> enumType$, Function<D, VAL> getter, BiConsumer<D, VAL> setter) {
+        return new EnumField<>(name$, enumType$, getter, setter);
     }
 
     protected final Object clone() throws CloneNotSupportedException {

@@ -72,28 +72,15 @@ public final class ResolverFactory {
         }
     }
 
-    protected static final void regSchema(Class<? extends DataBean> beanClz, BeanSchema beanSchema, SchemaField... fieldArr){
-        String clzName = beanSchema.getClass().getName();
-        //System.out.println(beanSchema.getClass().getA);
-        resolverMap.put(beanClz, beanSchema);
+    public static final void regResolver(Class typeClz, TypeResolverIF resolver){
+         //System.out.println(beanSchema.getClass().getA);
+        resolverMap.put(typeClz, resolver);
 
     }
-
-    protected static final BeanSchema getSchema(String clzName){
-        return SCHEMA_MAP.get(clzName);
-    }
-
-    public static void printSchemaMap(){
-        System.out.println(SCHEMA_MAP);
-    }
-
 
 
     private ResolverFactory(){}
 
-    public static final TypeResolverIF regBean(Class<DataBean> beanClz, BeanSchema schema){
-        resolverMap.put(beanClz, schema);
-    }
     public static final TypeResolverIF get(Class type){
         return resolverMap.get(type);
     }
