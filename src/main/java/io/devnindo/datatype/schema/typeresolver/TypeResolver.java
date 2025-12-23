@@ -23,8 +23,8 @@ import java.util.function.Consumer;
 /**
  *
  * */
-public interface TypeResolverIF<S, T> {
-    public Either<Violation, T> resolve(S val);
+public interface TypeResolverIF<S, T, V> {
+    public Either<V, T> resolve(S val);
 
     public S toJsonVal(T t);
 
